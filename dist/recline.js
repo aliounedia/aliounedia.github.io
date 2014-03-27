@@ -3521,14 +3521,23 @@ my.SlickGrid = Backbone.View.extend({
 	&& this.state.get("gridOptions").enabledDelRow != undefined 
       && this.state.get("gridOptions").enabledDelRow == true ){
     columns.push({
-        id: 'del',
-        name: '',
-        field: 'del',
-        sortable: true,
-        width: 38,
-        formatter: formatter,
-        validator:validator
+      id: 'del',
+      name: '',
+      field: 'del',
+      sortable: true,
+      width: 38,
+      formatter: formatter,
+      validator:validator
     })}
+    columns.push({
+      id: "#",
+      name: "",
+      width: 40,
+      behavior: "selectAndMove",
+      selectable: false,
+      resizable: false,
+      cssClass: "cell-reorder dnd"
+    })
     _.each(this.model.fields.toJSON(),function(field){
       var column = {
         id: field.id,
@@ -3651,6 +3660,9 @@ my.SlickGrid = Backbone.View.extend({
 
     this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
       self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
+    });
+    this._slickHandler.subscribe(this.grid.onMoveRows, function(e, args){
+      alert('test')
     });
 
     this.grid.onColumnsResized.subscribe(function(e, args){
