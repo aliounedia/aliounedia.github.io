@@ -349,7 +349,7 @@ my.SlickGrid = Backbone.View.extend({
     
 
     //Drag init Handler
-    self.grid.onDragInit.subscribe(function (e, dd) {
+    this.grid.onDragInit.subscribe(function (e, dd) {
       // prevent the grid from cancelling drag'n'drop by default
       e.stopImmediatePropagation();
     });
