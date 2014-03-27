@@ -289,57 +289,7 @@ my.SlickGrid = Backbone.View.extend({
       this.grid.setSortColumn(column, sortAsc);
     }
 
-    self.grid.registerPlugin(moveRowsPlugin);
-    this._slickHandler.subscribe(this.grid.onSort, function(e, args){
-      var order = (args.sortAsc) ? 'asc':'desc';
-      var sort = [{
-        field: args.sortCol.field,
-        order: order
-      }];
-      self.model.query({sort: sort});
-    });
-
-    this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
-      self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
-    });
     
-    this.grid.onColumnsResized.subscribe(function(e, args){
-        var columns = args.grid.getColumns();
-        var defaultColumnWidth = args.grid.getOptions().defaultColumnWidth;
-        var columnsWidth = [];
-        _.each(columns,function(column){
-          if (column.width != defaultColumnWidth){
-            columnsWidth.push({column:column.id,width:column.width});
-          }
-        });
-        self.state.set({columnsWidth:columnsWidth});
-    });
-    
-    this._slickHandler.subscribe(this.grid.onCellChange, function (e, args) {
-      // We need to change the model associated value
-      var grid = args.grid;
-      var model = data.getModel(args.row);
-      var field = grid.getColumns()[args.cell].id;
-      var v = {};
-      v[field] = args.item[field];
-      model.set(v);
-    });  
-    this._slickHandler.subscribe(this.grid.onClick,function(e, args){
-      //try catch , because this fail in qunit , but no
-      //error on browser.
-    	try{e.preventDefault()}catch(e){}
-    	if (args.cell == 1 && self.state.get("gridOptions").enabledDelRow == true){
-          // We need to delete the associated model
-          var model = data.getModel(args.row);
-          model.destroy()
-        }
-    }) ;
-    var columnpicker = new Slick.Controls.ColumnPicker(columns, this.grid,
-                                                       _.extend(options,{state:this.state}));
-
-
-
-
     /* Row reordering support based on
     https://github.com/mleibman/SlickGrid/blob/gh-pages/examples/example9-row-reordering.html
     
@@ -470,7 +420,55 @@ my.SlickGrid = Backbone.View.extend({
       dd.helper.remove();
       $(dd.available).css("background", "beige");
     });
+    /* end row reordering support*/
+    self.grid.registerPlugin(moveRowsPlugin);
+    
+    this._slickHandler.subscribe(this.grid.onSort, function(e, args){
+      var order = (args.sortAsc) ? 'asc':'desc';
+      var sort = [{
+        field: args.sortCol.field,
+        order: order
+      }];
+      self.model.query({sort: sort});
+    });
 
+    this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
+      self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
+    });
+    
+    this.grid.onColumnsResized.subscribe(function(e, args){
+        var columns = args.grid.getColumns();
+        var defaultColumnWidth = args.grid.getOptions().defaultColumnWidth;
+        var columnsWidth = [];
+        _.each(columns,function(column){
+          if (column.width != defaultColumnWidth){
+            columnsWidth.push({column:column.id,width:column.width});
+          }
+        });
+        self.state.set({columnsWidth:columnsWidth});
+    });
+    
+    this._slickHandler.subscribe(this.grid.onCellChange, function (e, args) {
+      // We need to change the model associated value
+      var grid = args.grid;
+      var model = data.getModel(args.row);
+      var field = grid.getColumns()[args.cell].id;
+      var v = {};
+      v[field] = args.item[field];
+      model.set(v);
+    });  
+    this._slickHandler.subscribe(this.grid.onClick,function(e, args){
+      //try catch , because this fail in qunit , but no
+      //error on browser.
+    	try{e.preventDefault()}catch(e){}
+    	if (args.cell == 1 && self.state.get("gridOptions").enabledDelRow == true){
+          // We need to delete the associated model
+          var model = data.getModel(args.row);
+          model.destroy()
+        }
+    }) ;
+    var columnpicker = new Slick.Controls.ColumnPicker(columns, this.grid,
+                                                       _.extend(options,{state:this.state}));
     if (self.visible){
       self.grid.init();
       self.rendered = true;
@@ -479,7 +477,7 @@ my.SlickGrid = Backbone.View.extend({
       self.rendered = false;
     }
     
-    /* end row reordering support*/
+   
     return this;
 
   },
