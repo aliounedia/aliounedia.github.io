@@ -349,7 +349,7 @@ my.SlickGrid = Backbone.View.extend({
     https://github.com/mleibman/SlickGrid/blob/gh-pages/examples/example9-row-reordering.html
     
     */
-    this.grid.setSelectionModel(new Slick.RowSelectionModel());
+    self.grid.setSelectionModel(new Slick.RowSelectionModel());
 
     var moveRowsPlugin = new Slick.RowMoveManager({
       cancelEditOnDrag: true
@@ -401,7 +401,7 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
-    this.grid.registerPlugin(moveRowsPlugin);
+    self.grid.registerPlugin(moveRowsPlugin);
     /* end row reordering support*/
     return this;
   },
