@@ -401,7 +401,7 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
-
+    this.grid.registerPlugin(moveRowsPlugin);
     /* end row reordering support*/
     return this;
   },
