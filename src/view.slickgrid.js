@@ -327,11 +327,11 @@ my.SlickGrid = Backbone.View.extend({
       //try catch , because this fail in qunit , but no
       //error on browser.
     	try{e.preventDefault()}catch(e){}
-    	if (args.cell == 0 && self.state.get("gridOptions").enabledDelRow == true){
-	  // We need to delete the associated model
-	  var model = data.getModel(args.row);
-        model.destroy()
-	 }
+    	if (args.cell == 1 && self.state.get("gridOptions").enabledDelRow == true){
+          // We need to delete the associated model
+          var model = data.getModel(args.row);
+          model.destroy()
+        }
     }) ;
     var columnpicker = new Slick.Controls.ColumnPicker(columns, this.grid,
                                                        _.extend(options,{state:this.state}));
