@@ -336,13 +336,7 @@ my.SlickGrid = Backbone.View.extend({
     var columnpicker = new Slick.Controls.ColumnPicker(columns, this.grid,
                                                        _.extend(options,{state:this.state}));
 
-    if (self.visible){
-      self.grid.init();
-      self.rendered = true;
-    } else {
-      // Defer rendering until the view is visible
-      self.rendered = false;
-    }
+
 
 
     /* Row reordering support based on
@@ -475,7 +469,15 @@ my.SlickGrid = Backbone.View.extend({
       dd.helper.remove();
       $(dd.available).css("background", "beige");
     });
-      
+
+    if (self.visible){
+      self.grid.init();
+      self.rendered = true;
+    } else {
+      // Defer rendering until the view is visible
+      self.rendered = false;
+    }
+    
     /* end row reordering support*/
     return this;
 
