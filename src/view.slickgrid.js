@@ -356,7 +356,7 @@ my.SlickGrid = Backbone.View.extend({
     
     //Drag start Handler
     this.grid.onDragStart.subscribe(function (e, dd) {
-      var cell = grid.getCellFromEvent(e);
+      var cell = this.grid.getCellFromEvent(e);
       if (!cell) {
         return;
       }
@@ -373,7 +373,7 @@ my.SlickGrid = Backbone.View.extend({
       e.stopImmediatePropagation();
       dd.mode = "recycle";
 
-      var selectedRows = grid.getSelectedRows();
+      var selectedRows = this.grid.getSelectedRows();
 
       if (!selectedRows.length || $.inArray(dd.row, selectedRows) == -1) {
         selectedRows = [dd.row];
@@ -443,8 +443,8 @@ my.SlickGrid = Backbone.View.extend({
         for (var i = 0; i < rowsToDelete.length; i++) {
           data.splice(rowsToDelete[i], 1);
         }
-        grid.invalidate();
-        grid.setSelectedRows([]);
+        this.grid.invalidate();
+        this.grid.setSelectedRows([]);
       });
 
 
