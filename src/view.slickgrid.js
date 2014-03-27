@@ -301,9 +301,9 @@ my.SlickGrid = Backbone.View.extend({
     this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
       self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
     });
-    this._slickHandler.subscribe(this.grid.onMoveRows, function(e, args){
+    /*this._slickHandler.subscribe(this.grid.onMoveRows, function(e, args){
       alert('test')
-    });
+    });*/
     this.grid.onColumnsResized.subscribe(function(e, args){
         var columns = args.grid.getColumns();
         var defaultColumnWidth = args.grid.getOptions().defaultColumnWidth;
