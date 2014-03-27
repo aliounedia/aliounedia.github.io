@@ -402,8 +402,83 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.render();
     });
     self.grid.registerPlugin(moveRowsPlugin);
+
+    //Drag init Handler
+    grid.onDragInit.subscribe(function (e, dd) {
+      // prevent the grid from cancelling drag'n'drop by default
+      e.stopImmediatePropagation();
+    });
+    
+    //Drag start Handler
+    grid.onDragStart.subscribe(function (e, dd) {
+      var cell = grid.getCellFromEvent(e);
+      if (!cell) {
+        return;
+      }
+
+      dd.row = cell.row;
+      if (!data[dd.row]) {
+        return;
+      }
+
+      if (Slick.GlobalEditorLock.isActive()) {
+        return;
+      }
+
+      e.stopImmediatePropagation();
+      dd.mode = "recycle";
+
+      var selectedRows = grid.getSelectedRows();
+
+      if (!selectedRows.length || $.inArray(dd.row, selectedRows) == -1) {
+        selectedRows = [dd.row];
+        grid.setSelectedRows(selectedRows);
+      }
+
+      dd.rows = selectedRows;
+      dd.count = selectedRows.length;
+
+      var proxy = $("<span></span>")
+          .css({
+            position: "absolute",
+            display: "inline-block",
+            padding: "4px 10px",
+            background: "#e0e0e0",
+            border: "1px solid gray",
+            "z-index": 99999,
+            "-moz-border-radius": "8px",
+            "-moz-box-shadow": "2px 2px 6px silver"
+          })
+          .text("Drag to Recycle Bin to delete " + dd.count + " selected row(s)")
+          .appendTo("body");
+
+      dd.helper = proxy;
+
+      $(dd.available).css("background", "pink");
+
+      return proxy;
+    });
+
+    //Ondrag Handler
+    grid.onDrag.subscribe(function (e, dd) {
+      if (dd.mode != "recycle") {
+        return;
+      }
+      dd.helper.css({top: e.pageY + 5, left: e.pageX + 5});
+    });
+
+    //Drag End Handler
+    grid.onDragEnd.subscribe(function (e, dd) {
+      if (dd.mode != "recycle") {
+        return;
+      }
+      dd.helper.remove();
+      $(dd.available).css("background", "beige");
+    });
+      
     /* end row reordering support*/
     return this;
+
   },
 
   remove: function () {
