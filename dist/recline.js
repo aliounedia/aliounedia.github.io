@@ -3521,14 +3521,15 @@ my.SlickGrid = Backbone.View.extend({
 	&& this.state.get("gridOptions").enabledDelRow != undefined 
       && this.state.get("gridOptions").enabledDelRow == true ){
     columns.push({
-      id: 'del',
-      name: '',
-      field: 'del',
-      sortable: true,
-      width: 38,
-      formatter: formatter,
-      validator:validator
-    })}
+        id: 'del',
+        name: '',
+        field: 'del',
+        sortable: true,
+        width: 38,
+        formatter: formatter,
+        validator:validator
+      })
+    }
     columns.push({
       id: "#",
       name: "",

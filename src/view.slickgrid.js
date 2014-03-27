@@ -155,6 +155,15 @@ my.SlickGrid = Backbone.View.extend({
 	  }
 	}
     };
+    columns.push({
+      id: "#",
+      name: "",
+      width: 40,
+      behavior: "selectAndMove",
+      selectable: false,
+      resizable: false,
+      cssClass: "cell-reorder dnd"
+    })
     //Add row delete support , check if enableDelRow is set to true or not set
     if(this.state.get("gridOptions") 
 	&& this.state.get("gridOptions").enabledDelRow != undefined 
@@ -169,15 +178,6 @@ my.SlickGrid = Backbone.View.extend({
         validator:validator
       })
     }
-    columns.push({
-      id: "#",
-      name: "",
-      width: 40,
-      behavior: "selectAndMove",
-      selectable: false,
-      resizable: false,
-      cssClass: "cell-reorder dnd"
-    })
     _.each(this.model.fields.toJSON(),function(field){
       var column = {
         id: field.id,
@@ -301,9 +301,7 @@ my.SlickGrid = Backbone.View.extend({
     this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
       self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
     });
-    /*this._slickHandler.subscribe(this.grid.onMoveRows, function(e, args){
-      alert('test')
-    });*/
+    
     this.grid.onColumnsResized.subscribe(function(e, args){
         var columns = args.grid.getColumns();
         var defaultColumnWidth = args.grid.getOptions().defaultColumnWidth;
@@ -346,6 +344,65 @@ my.SlickGrid = Backbone.View.extend({
       self.rendered = false;
     }
 
+
+    /* Row reordering support based on
+    https://github.com/mleibman/SlickGrid/blob/gh-pages/examples/example9-row-reordering.html
+    
+    */
+    grid.setSelectionModel(new Slick.RowSelectionModel());
+
+    var moveRowsPlugin = new Slick.RowMoveManager({
+      cancelEditOnDrag: true
+    });
+
+    moveRowsPlugin.onBeforeMoveRows.subscribe(function (e, data) {
+      for (var i = 0; i < data.rows.length; i++) {
+        // no point in moving before or after itself
+        if (data.rows[i] == data.insertBefore || data.rows[i] == data.insertBefore - 1) {
+          e.stopPropagation();
+          return false;
+        }
+      }
+      return true;
+    });
+
+    moveRowsPlugin.onMoveRows.subscribe(function (e, args) {
+      var extractedRows = [], left, right;
+      var rows = args.rows;
+      var insertBefore = args.insertBefore;
+      left = data.slice(0, insertBefore);
+      right = data.slice(insertBefore, data.length);
+
+      rows.sort(function(a,b) { return a-b; });
+
+      for (var i = 0; i < rows.length; i++) {
+        extractedRows.push(data[rows[i]]);
+      }
+
+      rows.reverse();
+
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        if (row < insertBefore) {
+          left.splice(row, 1);
+        } else {
+          right.splice(row - insertBefore, 1);
+        }
+      }
+
+      data = left.concat(extractedRows.concat(right));
+
+      var selectedRows = [];
+      for (var i = 0; i < rows.length; i++)
+        selectedRows.push(left.length + i);
+
+      self.grid.resetActiveCell();
+      self.grid.setData(data);
+      self.grid.setSelectedRows(selectedRows);
+      self.grid.render();
+    });
+
+    /* end row reordering support*/
     return this;
   },
 
