@@ -450,7 +450,7 @@ my.SlickGrid = Backbone.View.extend({
 
 
     /* end row reordering support*/
-    self.grid.registerPlugin(moveRowsPlugin);
+    this.grid.registerPlugin(moveRowsPlugin);
     /*
     this._slickHandler.subscribe(this.grid.onSort, function(e, args){
       var order = (args.sortAsc) ? 'asc':'desc';
