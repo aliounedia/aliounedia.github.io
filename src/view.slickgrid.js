@@ -422,7 +422,7 @@ my.SlickGrid = Backbone.View.extend({
     });
     /* end row reordering support*/
     self.grid.registerPlugin(moveRowsPlugin);
-    
+    /*
     this._slickHandler.subscribe(this.grid.onSort, function(e, args){
       var order = (args.sortAsc) ? 'asc':'desc';
       var sort = [{
@@ -432,6 +432,7 @@ my.SlickGrid = Backbone.View.extend({
       self.model.query({sort: sort});
     });
 
+    
     this._slickHandler.subscribe(this.grid.onColumnsReordered, function(e, args){
       self.state.set({columnsOrder: _.pluck(self.grid.getColumns(),'id')});
     });
@@ -469,6 +470,8 @@ my.SlickGrid = Backbone.View.extend({
     }) ;
     var columnpicker = new Slick.Controls.ColumnPicker(columns, this.grid,
                                                        _.extend(options,{state:this.state}));
+
+    */
     if (self.visible){
       self.grid.init();
       self.rendered = true;
