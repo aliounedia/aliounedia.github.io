@@ -341,10 +341,10 @@ my.SlickGrid = Backbone.View.extend({
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);
 
-      self.grid.resetActiveCell();
-      self.grid.setData(data);
-      self.grid.setSelectedRows(selectedRows);
-      self.grid.render();
+      this.grid.resetActiveCell();
+      this.grid.setData(data);
+      this.grid.setSelectedRows(selectedRows);
+      this.grid.render();
     });
     
 
@@ -355,7 +355,7 @@ my.SlickGrid = Backbone.View.extend({
     });
     
     //Drag start Handler
-    self.grid.onDragStart.subscribe(function (e, dd) {
+    this.grid.onDragStart.subscribe(function (e, dd) {
       var cell = grid.getCellFromEvent(e);
       if (!cell) {
         return;
@@ -405,7 +405,7 @@ my.SlickGrid = Backbone.View.extend({
     });
 
     //Ondrag Handler
-    self.grid.onDrag.subscribe(function (e, dd) {
+    this.grid.onDrag.subscribe(function (e, dd) {
       if (dd.mode != "recycle") {
         return;
       }
@@ -413,7 +413,7 @@ my.SlickGrid = Backbone.View.extend({
     });
 
     //Drag End Handler
-    self.grid.onDragEnd.subscribe(function (e, dd) {
+    this.grid.onDragEnd.subscribe(function (e, dd) {
       if (dd.mode != "recycle") {
         return;
       }
