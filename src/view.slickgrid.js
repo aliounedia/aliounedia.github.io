@@ -289,6 +289,7 @@ my.SlickGrid = Backbone.View.extend({
       this.grid.setSortColumn(column, sortAsc);
     }
 
+    self.grid.registerPlugin(moveRowsPlugin);
     this._slickHandler.subscribe(this.grid.onSort, function(e, args){
       var order = (args.sortAsc) ? 'asc':'desc';
       var sort = [{
@@ -395,7 +396,7 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
-    self.grid.registerPlugin(moveRowsPlugin);
+    
 
     //Drag init Handler
     self.grid.onDragInit.subscribe(function (e, dd) {
