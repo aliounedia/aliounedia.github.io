@@ -318,18 +318,19 @@ my.SlickGrid = Backbone.View.extend({
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
-    
+
+      var data = JSON.parse(self.model.records.toJSON())
+      console.log("data" + data)
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
       
-      left = self.model.records.slice(0, insertBefore);
-      right= self.model.records.slice(insertBefore, self.model.records.length);
+      left = data.slice(0, insertBefore);
+      right= data.slice(insertBefore, data.length);
       
       rows.sort(function(a,b) { return a-b; });
 
       for (var i = 0; i < rows.length; i++) {
-        //extractedRows.push(data[rows[i]]);
-        extractedRows.push(self.model.records.get([rows[i]]));
+          extractedRows.push(data[rows[i]]);
       }
 
       rows.reverse();
@@ -344,20 +345,12 @@ my.SlickGrid = Backbone.View.extend({
       }
 
       data = left.concat(extractedRows.concat(right));
-      self.model.records.off("reset")
-      self.model.records.reset(data)
-      self.listenTo(self.model.records,'reset', self.render);
-      var ds = new RowSet();
-      _.each(data, function(doc){
-        ds.push(doc, toRow(doc));
-      });
-      
       var selectedRows = [];
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);
 
       self.grid.resetActiveCell();
-      self.grid.setData(ds);
+      self.grid.setData(data);
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
       
