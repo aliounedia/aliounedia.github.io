@@ -318,7 +318,7 @@ my.SlickGrid = Backbone.View.extend({
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
-      //console.log('grid============' + JSON.stringify(self.grid))
+    
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
       
@@ -344,8 +344,8 @@ my.SlickGrid = Backbone.View.extend({
       }
 
       data = left.concat(extractedRows.concat(right));
-
-
+      console.log('data============' + JSON.stringify(data))
+      self.model.records.reset(data)
      
       var ds = new RowSet();
       _.each(data, function(doc){
