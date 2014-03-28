@@ -300,7 +300,7 @@ my.SlickGrid = Backbone.View.extend({
       cancelEditOnDrag: true
     });
 
-    /*
+    
     moveRowsPlugin.onBeforeMoveRows.subscribe(function (e, data) {
       for (var i = 0; i < data.rows.length; i++) {
         // no point in moving before or after itself
@@ -311,7 +311,7 @@ my.SlickGrid = Backbone.View.extend({
       }
       return true;
     });
-    */
+    
     
     moveRowsPlugin.onMoveRows.subscribe(function (e, args) {
       
@@ -344,10 +344,10 @@ my.SlickGrid = Backbone.View.extend({
       }
 
       data = left.concat(extractedRows.concat(right));
-      console.log('data============' + data.length)
+      
      
       var ds = new RowSet();
-      self.model.records.each(doc, function(doc){
+      _.each(data, function(doc){
         ds.push(doc, toRow(doc));
       });
       
@@ -358,8 +358,8 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.resetActiveCell();
       self.grid.setData(ds);
       self.grid.setSelectedRows(selectedRows);
-      //self.grid.render();
-      
+      self.grid.render();
+      console.log('0============' + JSON.stringify(self.model.records.get(0)))      
     });
     
     /*
