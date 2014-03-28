@@ -77,7 +77,7 @@ my.SlickGrid = Backbone.View.extend({
     };
 
     _.bindAll(this, 'render', 'onRecordChanged');
-    this.listenTo(this.model.records, 'add remove reset', this.render);
+    this.listenTo(this.model.records, 'add remove', this.render);
     this.listenTo(this.model.records, 'change', this.onRecordChanged);
     var state = _.extend({
         hiddenColumns: [],
@@ -345,7 +345,7 @@ my.SlickGrid = Backbone.View.extend({
 
       data = left.concat(extractedRows.concat(right));
       console.log('data============' + data.length)
-      //self.model.records.reset(data)
+      self.model.records.reset(data)
      
       var ds = new RowSet();
       _.each(data, function(doc){
