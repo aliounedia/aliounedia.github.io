@@ -349,7 +349,7 @@ my.SlickGrid = Backbone.View.extend({
 
      
       var ds = new RowSet();
-      _.each(data, unction(doc){
+      _.each(data, function(doc){
         ds.push(doc, toRow(doc));
       });
       
