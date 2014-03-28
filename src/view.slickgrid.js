@@ -318,11 +318,12 @@ my.SlickGrid = Backbone.View.extend({
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
+      var data = self.grid.getData()
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
       
-      left = self.model.records.slice(0, insertBefore);
-      right= self.model.records.slice(insertBefore, self.model.records.length);
+      left = data.slice(0, insertBefore);
+      right= data.slice(insertBefore, data.length);
       
       rows.sort(function(a,b) { return a-b; });
 
@@ -343,21 +344,21 @@ my.SlickGrid = Backbone.View.extend({
       }
 
       data = left.concat(extractedRows.concat(right));
-      //reset
-      self.model.records.reset(data)
-      
+
+
+      /*
       var ds = new RowSet();
       self.model.records.each(function(doc){
         ds.push(doc, toRow(doc));
       });
-
+      */
       var selectedRows = [];
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);
 
       self.grid.resetActiveCell();
-      //self.grid.setData(data);
-      self.grid.setData(ds)
+      self.grid.setData(data);
+      //self.grid.setData(ds)
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
