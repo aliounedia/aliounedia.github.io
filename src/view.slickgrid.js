@@ -319,7 +319,7 @@ my.SlickGrid = Backbone.View.extend({
       var rows = args.rows;
       var insertBefore = args.insertBefore;
 
-      var data = JSON.parse(self.model.records.toJSON())
+      var data = self.model.records.toJSON()
       console.log("data" + data)
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
