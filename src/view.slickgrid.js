@@ -360,6 +360,7 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.resetActiveCell();
       //self.grid.setData(data);
       self.grid = new  Slick.Grid(self.el, ds, visibleColumns, options);
+      self.grid.init();
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
