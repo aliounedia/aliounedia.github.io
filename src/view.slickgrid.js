@@ -453,8 +453,8 @@ my.SlickGrid = Backbone.View.extend({
         for (var i = 0; i < rowsToDelete.length; i++) {
           data.splice(rowsToDelete[i], 1);
         }
-        grid.invalidate();
-        grid.setSelectedRows([]);
+        self.grid.invalidate();
+        self.grid.setSelectedRows([]);
       });
 
 
