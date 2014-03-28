@@ -157,7 +157,7 @@ my.SlickGrid = Backbone.View.extend({
     };
     columns.push({
       id: "#",
-      name: "",
+      name: "==",
       width: 40,
       behavior: "selectAndMove",
       selectable: false,
