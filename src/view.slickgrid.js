@@ -430,7 +430,8 @@ my.SlickGrid = Backbone.View.extend({
       dd.helper.remove();
       $(dd.available).css("background", "beige");
     });
-    
+
+    /*
     $.drop({mode: "mouse"});
     $("#dropzone")
       .bind("dropstart", function (e, dd) {
@@ -456,8 +457,8 @@ my.SlickGrid = Backbone.View.extend({
         self.grid.invalidate();
         self.grid.setSelectedRows([]);
       });
-
-
+      */
+      
 
     /* end row reordering support*/
     self.grid.registerPlugin(moveRowsPlugin);
