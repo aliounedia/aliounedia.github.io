@@ -346,7 +346,7 @@ my.SlickGrid = Backbone.View.extend({
       data = left.concat(extractedRows.concat(right));
       self.model.records.off("reset")
       self.model.records.reset(data)
-      self.listenTo(this.model.records,'reset', self.render);
+      self.listenTo(self.model.records,'reset', self.render);
       var ds = new RowSet();
       _.each(data, function(doc){
         ds.push(doc, toRow(doc));
