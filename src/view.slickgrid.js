@@ -372,7 +372,8 @@ my.SlickGrid = Backbone.View.extend({
       }
 
       dd.row = cell.row;
-      if (!data[dd.row]) {
+      //if (!data[dd.row]) {
+      if (! self.model.records.get(dd.row) ) {
         return;
       }
 
