@@ -357,13 +357,13 @@ my.SlickGrid = Backbone.View.extend({
       self.grid.render();
     });
     
-
+    /*
     //Drag init Handler
     this.grid.onDragInit.subscribe(function (e, dd) {
       // prevent the grid from cancelling drag'n'drop by default
       e.stopImmediatePropagation();
     });
-    
+    */
     //Drag start Handler
 
     /*this.grid.onDragStart.subscribe(function (e, dd) {
@@ -415,7 +415,8 @@ my.SlickGrid = Backbone.View.extend({
 
       return proxy;
     });*/
-
+    
+    /*
     //Ondrag Handler
     this.grid.onDrag.subscribe(function (e, dd) {
       if (dd.mode != "recycle") {
@@ -432,7 +433,7 @@ my.SlickGrid = Backbone.View.extend({
       dd.helper.remove();
       $(dd.available).css("background", "beige");
     });
-
+    */
     /*
     $.drop({mode: "mouse"});
     $("#dropzone")
