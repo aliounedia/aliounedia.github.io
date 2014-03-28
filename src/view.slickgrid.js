@@ -300,8 +300,8 @@ my.SlickGrid = Backbone.View.extend({
       cancelEditOnDrag: true
     });
 
+    /*
     moveRowsPlugin.onBeforeMoveRows.subscribe(function (e, data) {
-      alert("data.rows : " + JSON.stringify(data.rows))
       for (var i = 0; i < data.rows.length; i++) {
         // no point in moving before or after itself
         if (data.rows[i] == data.insertBefore || data.rows[i] == data.insertBefore - 1) {
@@ -311,8 +311,10 @@ my.SlickGrid = Backbone.View.extend({
       }
       return true;
     });
+    */
     
     moveRowsPlugin.onMoveRows.subscribe(function (e, args) {
+      console.log('args============' + JSON.stringif(args))
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
