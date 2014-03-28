@@ -349,10 +349,12 @@ my.SlickGrid = Backbone.View.extend({
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);
 
-      self.grid.resetActiveCell();
-      self.grid.setData(data);
-      self.grid.setSelectedRows(selectedRows);
-      self.grid.render();
+      //self.grid.resetActiveCell();
+      //self.grid.setData(data);
+      //self.grid.setSelectedRows(selectedRows);
+      //self.grid.render();
+      
+      self.model.records.reset(data)
       
     });
     
