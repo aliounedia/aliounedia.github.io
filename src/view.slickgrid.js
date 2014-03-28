@@ -318,8 +318,7 @@ my.SlickGrid = Backbone.View.extend({
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
-      var data = self.grid.getData()
-      //console.log('data============' + JSON.stringify(data))
+      //console.log('grid============' + JSON.stringify(self.grid))
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
       
@@ -358,9 +357,7 @@ my.SlickGrid = Backbone.View.extend({
         selectedRows.push(left.length + i);
 
       self.grid.resetActiveCell();
-      //self.grid.setData(data);
-      self.grid = new  Slick.Grid(self.el, ds, visibleColumns, options);
-      self.grid.init();
+      self.grid.setData(ds);
       self.grid.setSelectedRows(selectedRows);
       self.grid.render();
     });
