@@ -365,8 +365,10 @@ my.SlickGrid = Backbone.View.extend({
     });
     
     //Drag start Handler
-    this.grid.onDragStart.subscribe(function (e, dd) {
+
+    /*this.grid.onDragStart.subscribe(function (e, dd) {
       var cell = self.grid.getCellFromEvent(e);
+ 
       if (!cell) {
         return;
       }
@@ -412,7 +414,7 @@ my.SlickGrid = Backbone.View.extend({
       $(dd.available).css("background", "pink");
 
       return proxy;
-    });
+    });*/
 
     //Ondrag Handler
     this.grid.onDrag.subscribe(function (e, dd) {
