@@ -155,19 +155,20 @@ my.SlickGrid = Backbone.View.extend({
 	  }
 	}
     };
-    columns.push({
-      id: "#",
-      name: "==",
-      width: 40,
-      behavior: "selectAndMove",
-      selectable: false,
-      resizable: false,
-      cssClass: "cell-reorder dnd"
-    })
+   
     //Add row delete support , check if enableDelRow is set to true or not set
     if(this.state.get("gridOptions") 
 	&& this.state.get("gridOptions").enabledDelRow != undefined 
       && this.state.get("gridOptions").enabledDelRow == true ){
+      columns.push({
+        id: "#",
+        name: "",
+        width: 40,
+        behavior: "selectAndMove",
+        selectable: false,
+        resizable: false,
+        cssClass: "cell-reorder dnd"
+       })
       columns.push({
         id: 'del',
         name: '',
@@ -317,11 +318,7 @@ my.SlickGrid = Backbone.View.extend({
       var rows = args.rows;
       var insertBefore = args.insertBefore;
 
-      var data = self.model.records.toJSON()
-      console.log("data" + data)
-      //left  = data.slice(0, insertBefore);
-      //right = data.slice(insertBefore, data.length);
-      
+      var data = self.model.records.toJSON()      
       left = data.slice(0, insertBefore);
       right= data.slice(insertBefore, data.length);
       
@@ -346,6 +343,7 @@ my.SlickGrid = Backbone.View.extend({
       var selectedRows = [];
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);      
+
       self.model.records.reset(data)
       
     });
