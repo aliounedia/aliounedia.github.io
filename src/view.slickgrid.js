@@ -314,11 +314,12 @@ my.SlickGrid = Backbone.View.extend({
     */
     
     moveRowsPlugin.onMoveRows.subscribe(function (e, args) {
-      console.log('args============' + JSON.stringify(args))
+      
       var extractedRows = [], left, right;
       var rows = args.rows;
       var insertBefore = args.insertBefore;
       var data = self.grid.getData()
+      console.log('data============' + JSON.stringify(data))
       //left  = data.slice(0, insertBefore);
       //right = data.slice(insertBefore, data.length);
       
