@@ -387,7 +387,7 @@ my.SlickGrid = Backbone.View.extend({
 
       if (!selectedRows.length || $.inArray(dd.row, selectedRows) == -1) {
         selectedRows = [dd.row];
-        grid.setSelectedRows(selectedRows);
+        self.grid.setSelectedRows(selectedRows);
       }
 
       dd.rows = selectedRows;
