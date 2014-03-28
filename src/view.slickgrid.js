@@ -341,10 +341,10 @@ my.SlickGrid = Backbone.View.extend({
       for (var i = 0; i < rows.length; i++)
         selectedRows.push(left.length + i);
 
-      this.grid.resetActiveCell();
-      this.grid.setData(data);
-      this.grid.setSelectedRows(selectedRows);
-      this.grid.render();
+      self.grid.resetActiveCell();
+      self.grid.setData(data);
+      self.grid.setSelectedRows(selectedRows);
+      self.grid.render();
     });
     
 
@@ -356,7 +356,7 @@ my.SlickGrid = Backbone.View.extend({
     
     //Drag start Handler
     this.grid.onDragStart.subscribe(function (e, dd) {
-      var cell = this.grid.getCellFromEvent(e);
+      var cell = self.grid.getCellFromEvent(e);
       if (!cell) {
         return;
       }
@@ -373,7 +373,7 @@ my.SlickGrid = Backbone.View.extend({
       e.stopImmediatePropagation();
       dd.mode = "recycle";
 
-      var selectedRows = this.grid.getSelectedRows();
+      var selectedRows = grid.getSelectedRows();
 
       if (!selectedRows.length || $.inArray(dd.row, selectedRows) == -1) {
         selectedRows = [dd.row];
@@ -443,14 +443,14 @@ my.SlickGrid = Backbone.View.extend({
         for (var i = 0; i < rowsToDelete.length; i++) {
           data.splice(rowsToDelete[i], 1);
         }
-        this.grid.invalidate();
-        this.grid.setSelectedRows([]);
+        grid.invalidate();
+        grid.setSelectedRows([]);
       });
 
 
 
     /* end row reordering support*/
-    this.grid.registerPlugin(moveRowsPlugin);
+    self.grid.registerPlugin(moveRowsPlugin);
     /*
     this._slickHandler.subscribe(this.grid.onSort, function(e, args){
       var order = (args.sortAsc) ? 'asc':'desc';
