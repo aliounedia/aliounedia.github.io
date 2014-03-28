@@ -383,7 +383,7 @@ my.SlickGrid = Backbone.View.extend({
       e.stopImmediatePropagation();
       dd.mode = "recycle";
 
-      var selectedRows = grid.getSelectedRows();
+      var selectedRows = self.grid.getSelectedRows();
 
       if (!selectedRows.length || $.inArray(dd.row, selectedRows) == -1) {
         selectedRows = [dd.row];
