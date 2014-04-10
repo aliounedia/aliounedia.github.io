@@ -167,7 +167,7 @@ my.SlickGrid = Backbone.View.extend({
         behavior: "selectAndMove",
         selectable: false,
         resizable: false,
-        cssClass: "cell-reorder dnd"
+        cssClass: "recline-cell-reorder"
        })
       columns.push({
         id: 'del',
