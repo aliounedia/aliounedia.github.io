@@ -80,9 +80,9 @@ var createExplorer = function(dataset, state) {
 	    // Enable support for row add
             enabledAddRow: true,
 	    // Enable support for row delete
-	    // enabledDelRow: true,
+	    enabledDelRow: true,
 	    // Enable support for row Reoder 
-	    enableReOrderRow:true,
+	    //enableReOrderRow:true,
             autoEdit: false,
             enableCellNavigation: true
           },
