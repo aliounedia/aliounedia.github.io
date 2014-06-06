@@ -1,137 +1,76 @@
-[![Build Status](https://travis-ci.org/okfn/recline.png)](https://travis-ci.org/okfn/recline)
+View, visualize and transform data in the browser.
 
-A simple but powerful library for building data applications in pure Javascript and HTML.
+Data Explorer is a browser-based (pure HTML + JS) open-source application for
+exploring and transforming data.
 
-<h3><a href="http://okfnlabs.org/recline/">Recline Website - including Overview, Documentation, Demos etc</a></h3>
+It works well with any source of tabular data. Load and save from multiple
+sources include google spreadsheets, CSVs and Github. Graph and map data, write
+javascript to clean and transform data.
 
-## Features
+Built on [Recline JS](http://okfnlabs.org/recline/).
 
-* Open-source (and heavy reuser of existing open-source libraries)
-* Pure javascript (no Flash) and designed for integration -- so it is easy to
-  embed in other sites and applications
-* View and edit your data in clean grid interface
-* Bulk update/clean your data using an easy scripting UI
-* Visualize your data
-* And more ... see <http://okfnlabs.org/recline/>
+## Use it
 
-## Contributing
+Visit <http://explorer.okfnlabs.org/>
 
-See CONTRIBUTING.md.
+Want to use it locally? Just do "save as" and save the html (with all
+associated files) to your hard disk. Note that for github login to work you
+will need to have the app opened at a non file:/// url e.g.
+http://localhost/dataexplorer.
 
-### Contributors
+## Developers
 
-* [Rufus Pollock](http://rufuspollock.org/)
-* [Max Ogden](http://maxogden.com/)
-* [John Glover](https://github.com/johnglover)
-* [James Casbon](http://casbon.me/)
-* [Adrià Mercader](http://amercader.net/)
-* [Dominik Moritz](https://github.com/domoritz)
-* [Friedrich Lindenberg](http://pudo.org/)
-* [Alioune Dia](http://https://github.com/aliounedia)
-* [kielni](https://github.com/kielni)
-* And [many more](https://github.com/okfn/recline/graphs/contributors)
+Install:
 
-## Changelog
+    git clone --recursive https://github.com/okfn/dataexplorer
 
-### v0.6 - Sprint 2013 (tbc)
+Then just open `index.html` in your browser!
 
-[v0.6 milestone](https://github.com/okfn/recline/issues?milestone=5)
+Note: if you just open `index.html` most of the app will function but login
+will **not** work. For login to work on your local machine you must deploy the
+app at this specific URL:
 
-Possible breaking changes
-* Support for row/add/delete/Reorder for recline slickGrid check `_includes/recline-deps.html` for slcikGrid plugins required #396
-* Many backends moved to their own repositories #314
-* Updated Leaflet to latest version 0.4.4 #220
-* Added marker clustering in map view to handle a large number of markers
-* Dataset.restore method removed (not used internally except from Multiview.restore)
-* Views no longer call render in initialize but must be called client code
-* Backend.Memory.Store attribute for holding 'records' renamed to `records` from `data`
-* Require new underscore.deferred vendor library for all use (jQuery no longer required if just using recline.dataset.js)
-* View.el is now the raw DOM element. If you want a jQuery-wrapped version, use view.$el. #350
-* Upgraded timelinejs lib - #316
-* Pager widget now takes Dataset object rather than QueryState object #386
+    http://localhost/src/dataexplorer/
 
-### v0.5 - July 5th 2012 (first public release)
+The reason for this is that a (uniqute) "callback" URL to the location of the
+DataExplore instance that the OAuth login will send users back to has to be set
+in Github when you set up the OAuth "app" in Github (and that URL is the one
+listed there).
 
-[40 closed issues](https://github.com/okfn/recline/issues?milestone=2&page=1&state=closed)
+If you are running or nginx or apache on your local machine setting up an alias
+like this to your local src directory should be easy.
 
-Lots of breaking changes to the API from v0.4 (should be very few going forwards) including:
+### Github Login
 
-* State only stores backend (name) and dataset url (in url field) rather than entire dataset object
-* Backends heavily reorganized
-* Rename Document -> Record
-* Rename DataExplorer view to MultiView
-* ...
+Login is via Github using their OAuth method.
 
-### v0.4 - April 26th 2012
+We have a pure HTML / JS app (no standard backend) and with pure HTML/JS you
+can't do OAuth Github login directly and need an OAuth proxy in the form of
+[gatekeeper][].
 
-[23 closed issues](https://github.com/okfn/recline/issues?milestone=2&page=1&state=closed) including:
+[gatekeeper]: https://github.com/prose/gatekeeper
 
-* Map view using Leaflet - #69, #64, #89, #97
-* Term filter support - #66
-* Faceting support- #62
-* Tidy up CSS and JS - #81 and #78
-* Manage and serialize view and dataset state (plus support for embed and permalinks) - #88, #67
-* Graph view improvements e.g. handle date types correctly - #75
-* Write support for ES backend - #61
-* Remove JQuery-UI dependency in favour of bootstrap modal - #46
-* Improved CSV import support - #92
+Thus, if you want to deploy your own instance of Data Explorer you'll need to
+set up a new instance of gatekeeper and then change the `gatekeeper_url` value
+in `src/boot.js`.
 
-### v0.3 - March 31st 2012
+### Understanding the Architecture
 
-[16 closed issues](https://github.com/okfn/recline/issues?milestone=1&state=closed) including:
+To learn more about the the code see doc/developers.md
 
-* ElasticSearch (and hence DataHub/CKAN) backend - #54
-* Loading of local CSV files - #36
-* Fully worked out Data Query support - #34, #49, #53, #57
-* New Field model object for richer field information - #25
-* Upgrade to Bootstrap v2.0 - #55
-* Recline Data Explorer app improvements e.g. #39 (import menu)
-* Graph improvements - #58 (more graph types, graph interaction)
+### Deploying
 
-### v0.2 - Feb 24th 2012
+For github login
 
-[17 closed issues](https://github.com/okfn/recline/issues?milestone=3&state=closed) including:
+## License and Credits
 
-* Major refactor of backend and model relationship - #35 and #43
-* Support Google Docs Spreadsheets as a Backend - #15
-* Support for online CSV and Excel files via DataProxy backend - #31
-* Data Explorer is customizable re loaded views - #42
-* Start of documentation - #33
-* Views in separate files - #41
-* Better error reporting from backends on JSONP errors - #30
-* Sorting and show/hide of columns in data grid - #23, #29
-* Support for pagination - #27
-* Split backends into separate files to make them easier to maintain and reuse separately #50
+Licensed under the MIT license.
 
-### v0.1 - Jan 28th 2012
+All Credits as per Recline. Also all the great vendor libraries including:
 
-* Core models and structure including Dataset and Document
-* Memory and webstore backends
-* Grid, Graph and Data Explorer views
-* Bootstrap-based theme - #22
-
-## Copyright and License
-
-Copyright 2011 Max Ogden and Rufus Pollock.
-
-Licensed under the MIT license:
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
+* Backbone
+* Bootstrap
+* Leaflet
+* Flot
+* [CodeMirror](http://codemirror.net/)
 

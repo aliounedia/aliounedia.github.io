@@ -1,0 +1,562 @@
+@import url(http://fonts.googleapis.com/css?family=News+Cycle:400,700|Merriweather:400,300,700);
+
+body {
+  padding-top: 60px;
+}
+
+body, p {
+  font-size: 14px;
+	font-family: 'Merriweather', serif;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar, form, .btn, input, button, select, textarea
+{
+	font-family: 'News Cycle', Arial, sans-serif;
+}
+
+a {
+  font-weight: 700;
+}
+
+/* we do not have a LH sidebar */
+.container-fluid > .content {
+  margin-left: 0;
+}
+
+.processing-notice {
+  position: absolute;
+  left: 50%;
+  top: 200px;
+  z-index: 1000000;
+}
+
+i.gdrive {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  vertical-align: top;
+  background: url(drive20.png);
+}
+
+/* Custom scroll-bars */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(150,150,150,0.8);
+}
+
+#footer {
+  background-color: #f5f5f5;
+  padding: 10px 10px;
+  border-top: solid 1px #eee;
+  font-size: 90%;
+  margin: 0 -20px -20px;
+}
+
+.feedback {
+  position: absolute;
+  right: 4px;
+  top: 250px;
+  width: 30px;
+  -webkit-transform: rotate(90deg);
+  -o-transform: rotate(90deg); 
+  transform: rotate(90deg);
+  z-index: 100;
+}
+
+.feedback a {
+  color: #333;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 5px 10px;
+  margin-top: 3px;
+  background-color: white;
+  border: solid 1px #eee;
+  border-top: none;
+}
+
+.feedback a:hover {
+  text-decoration: none;
+  background-color: #ddd;
+}
+
+/**********************************************************
+  * Navigation
+  *********************************************************/
+
+.brand.logo img {
+  margin-top: -3px;
+}
+
+.brand.logo {
+  padding-right: 8px;
+}
+
+.navbar-inner {
+  background: #e0e7eb;
+  padding-top: 0px;
+}
+
+.navbar-inner .brand {
+  color: #434C50;
+  padding-top: 7px;
+  padding-bottom: 6px;
+}
+
+.navbar-inner .brand .subtitle {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar .divider-vertical {
+  background-color: #acbfca;
+  border-right: 1px solid #f5f7f8;
+  width: 1px;
+  margin: 0;
+}
+
+.navbar .nav > li > a {
+  color: #434c50;
+  text-shadow: none;
+}
+
+.navbar .nav > li > a:hover {
+  color: #222;
+}
+
+.user-status li.not-logged-in {
+  display: none;
+}
+
+.user-status.logged-out .not-logged-in {
+  display: inherit;
+}
+
+.user-status.logged-out .logged-in {
+  display: none;
+}
+
+.navbar .nav .okf-logo a {
+  padding: 5px;
+}
+
+.user-status a.logout {
+  padding-left: 0;
+  margin-bottom: -1px;
+}
+
+/**********************************************************
+  * Splash page at start
+  *********************************************************/
+
+.instructions .well {
+  height: 180px;
+}
+
+.instructions h3 {
+  margin-top: 0;
+}
+
+.view.login .splash {
+  text-align: center;
+  background: white;
+  font-weight: 400;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+  position: relative;
+  margin: 20px auto 0 auto;
+  width: 340px;
+  border: 1px solid #C3CCD0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0),0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  }
+
+.authorize {
+  border-top: 1px solid #C3CCD0;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+  padding: 20px ;
+  }
+
+.authorize p {
+  margin-top: 0; 
+  margin-bottom: 20px;
+  }
+  
+.authorize a.button {
+  display: block;
+  background: #516066;
+  padding: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-family:'OpenSans', sans-serif; 
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  }
+  .authorize a.button:hover { background: #3d4548; }
+
+/**********************************************************
+  * Project 
+  *********************************************************/
+
+.view.project {
+  margin-top: -8px;
+  position: relative;
+}
+
+.view.project .meta {
+  position: absolute;
+  top: 45px;
+  bottom: 0;
+}
+
+.top-row {
+  height: 300px;
+  width: 100%;
+}
+
+.view.project .project-name {
+  margin-top: 0;
+  display: inline-block;
+}
+
+.top-panel {
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+  position: relative;
+  vertical-align: top;
+}
+
+.view.project .readme {
+  font-size: 14px;
+  height: 100%;
+  overflow: auto;
+  margin-top: -36px;
+}
+
+.view.project .readme .controls {
+  position: absolute;
+  top: 0px;
+  left: 550px;
+}
+
+.readme .controls a {
+  width: 120px;
+}
+
+#fork p {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#top-row-buttons {
+  float: right;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.view.project .data-app {
+  margin: 15px 0;
+}
+
+.view .recline-slickgrid {
+  height: 500px;
+}
+
+.view.project .header {
+  margin-bottom: 5px;
+  height: 35px;
+}
+
+.view.project .data-view-container {
+  display: block;
+  margin-right: 225px;
+}
+
+.view.project .data-view-sidebar {
+  float: right;
+  margin-left: 8px;
+  width: 220px;
+}
+
+.view.project .header .navigation {
+  margin-bottom: 8px;
+  float: left;
+}
+
+.view.project .header .navigation,
+.view.project .header .pagination,
+.view.project .header .pagination form
+{
+  display: inline;
+}
+
+.view.project .header .menu-right {
+  float: right;
+  margin-left: 5px;
+  padding-left: 5px;
+  border-left: solid 2px #ddd;
+}
+
+.header .recline-results-info {
+  line-height: 28px;
+  margin-left: 20px;
+  float: left;
+}
+
+/**********************************************************
+  * Query Editor
+  *********************************************************/
+
+.header .recline-query-editor {
+  float: right;
+  height: 30px;
+}
+
+.header .input-prepend {
+  margin-bottom: auto;
+}
+
+.header .add-on {
+  float: left;
+}
+
+/* needed for Chrome but not FF */
+.header .add-on {
+  margin-left: -27px;
+}
+
+/* needed for FF but not chrome */
+.header .input-prepend {
+  vertical-align: top;
+}
+
+.header .recline-query-editor form button {
+  vertical-align: top;
+}
+
+/**********************************************************
+  * Pager
+  *********************************************************/
+
+.header .recline-pager {
+  float: left;
+  margin: auto;
+  display: block;
+  margin-left: 20px;
+}
+
+.header .recline-pager .pagination input {
+  width: 30px;
+  height: 16px;
+  padding: 2px 4px;
+  margin: 0;
+  margin-top: -1px;
+}
+
+.header .recline-pager .pagination a {
+  line-height: 26px;
+  padding: 0 6px;
+}
+
+/**********************************************************
+  * Dashboard
+  *********************************************************/
+
+.dashboard .load-btn {
+  float: right;
+}
+
+.dashboard .project.summary .btn-danger {
+  float: right;
+}
+
+/**********************************************************
+  * Project List
+  *********************************************************/
+
+.project.summary {
+	padding: 1em 0 0.5em 0.0em;
+	border-bottom: 1px solid #ececec;
+}
+
+.project.summary .title {
+  padding-top: 0.5em;
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+.project.summary .title a {
+	text-decoration: none;
+}
+
+/**********************************************************
+  * CodeMirror editable areas
+  *********************************************************/
+
+.script-editor, .meta {
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.meta .CodeMirror {
+  height: 100%;
+}
+
+.script-editor .CodeMirror {
+  font-size: 12px;
+}
+
+.script-editor > div {
+  position: relative;
+  height: 100%;
+}
+
+.script-editor-widget {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+}
+
+.script-editor-widget .CodeMirror {
+  border: 1px solid #ddd;
+  height: 100%;
+}
+
+.script-editor .output {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 80%;
+  padding: 5px 10px;
+  height: 40px;
+  background-color: #eee;
+}
+
+.script-editor .output .error {
+  color: red;
+  font-style: italic;
+}
+
+button.editreadme, button.savereadme {
+  position: absolute;
+  top: -36px;
+}
+
+.script-editor .header {
+  position: absolute;
+  top: -36px;
+  width: 100%;
+}
+
+.script-editor .header h4 {
+  float: left;
+}
+
+.script-editor .header .buttons {
+  float: right;
+}
+
+button.clear, button.editreadme, button.savereadme {
+  right: 0;
+}
+
+button.runsandbox {
+  right: 90px;
+}
+
+.lint-error {
+  font-size: 10px;
+  line-height: 10px;
+  background: #f00;
+  color: white;
+  padding: 0 2px 1px;
+}
+
+.lint-error i {
+  margin-right: 3px;
+}
+
+/**********************************************************
+  * About page
+  *********************************************************/
+
+body.about {
+  padding-top: 40px;
+  background-color: #eee;
+}
+
+body.about .content {
+  background-color: #fff;
+  padding: 20px;
+  margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+          box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+
+body.about .page-header {
+  background-color: #f5f5f5;
+  padding: 10px 20px 10px;
+  margin: -20px -20px 20px;
+}
+
+.view.about h1 {
+}
+
+.view.about .instructions .well {
+  padding-bottom: 25px;
+  background-color: #E0E7EB;
+}
+
+.view.about .instructions .well h3 {
+  margin-bottom: 10px;
+}
+
+.view.about .followup {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.view.about .actions {
+  text-align: center;
+}
+
+.view.about .actions a {
+  width: 250px;
+  margin: 30px;
+}
+
+/**********************************************************
+  * Tweaks to Recline
+  *********************************************************/
+
+.recline-slickgrid {
+  font-size: 12px;
+}
+
+.splitter-bar {
+  width: 10px;
+}
