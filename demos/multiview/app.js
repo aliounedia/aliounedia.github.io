@@ -66,7 +66,7 @@ var createExplorer = function(dataset, state) {
   }
   window.dataExplorer = null;
   var $el = $('<div />');
-  $el.appendTo(window.explorerDiv);
+ 
 
   var views = [
     {
@@ -139,8 +139,7 @@ var createExplorer = function(dataset, state) {
 	  el: $el
    })
   window.dataExplorer.visible = true;
-
-
   window.dataExplorer.render()
+  $el.appendTo(window.explorerDiv);
 }
 
