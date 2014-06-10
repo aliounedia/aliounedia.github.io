@@ -110,11 +110,15 @@ var createExplorer = function(dataset, state) {
     }
   ];
 
- window.dataExplorer = new recline.View.MultiView({
+ /*window.dataExplorer = new recline.View.MultiView({
     model: dataset,
     el: $el,
     state: state,
     views: views
-  });
+  });*/
+  window.dataExplorer = new recline.View.MultiView({
+    model: dataset,
+    el: $el,
+  })
 }
 
