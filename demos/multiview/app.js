@@ -65,8 +65,8 @@ var createExplorer = function(dataset, state) {
     reload = true;
   }
   window.dataExplorer = null;
-  //var $el = $('<div />');
-  //$el.appendTo(window.explorerDiv);
+  var $el = $('<div />');
+  $el.appendTo(window.explorerDiv);
 
   var views = [
     {
@@ -121,6 +121,8 @@ var createExplorer = function(dataset, state) {
     model: dataset,
     el: $el
   })
-  window.dataExplorer.render().el.appendTo(window.explorerDiv)
+  window.dataExplorer.render()
+  alert(dataExplorer.el)
+
 }
 
