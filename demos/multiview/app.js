@@ -118,7 +118,7 @@ var createExplorer = function(dataset, state) {
   });*/
   window.dataExplorer  =new recline.View.SlickGrid({
         model: dataset,
-        state: {
+        /*state: {
           gridOptions: {
             editable: true,
 	    // Enable support for row add
@@ -135,9 +135,9 @@ var createExplorer = function(dataset, state) {
             { column: 'title', editor: Slick.Editors.Text }
           ],
 	    
-        },
+        },*/
 	  el: $el
    })
-  //window.dataExplorer.render()
+  window.dataExplorer.render()
 }
 
