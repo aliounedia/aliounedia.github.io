@@ -118,7 +118,7 @@ var createExplorer = function(dataset, state) {
   });*/
   window.dataExplorer = new recline.View.SlickGrid({
     model: dataset,
-    el: $el,
+    el: $el
   })
   window.dataExplorer.render()
 }
