@@ -116,7 +116,7 @@ var createExplorer = function(dataset, state) {
     state: state,
     views: views
   });*/
-  window.dataExplorer = new recline.View.MultiView({
+  window.dataExplorer = new recline.View.SlickGrid({
     model: dataset,
     el: $el,
   })
