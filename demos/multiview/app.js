@@ -122,7 +122,7 @@ var createExplorer = function(dataset, state) {
     el: $el
   })
   window.dataExplorer.render()
-  alert(window.dataExplorer.el)
+  alert(window.dataExplorer.$el.html())
 
 }
 
