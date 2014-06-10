@@ -1,4 +1,4 @@
-jQuery(function($) {
+/*jQuery(function($) {
   window.dataExplorer = null;
   window.explorerDiv = $('.data-explorer-here');
 
@@ -66,7 +66,7 @@ var createExplorer = function(dataset, state) {
   }
   window.dataExplorer = null;
   var $el = $('<div />');
- 
+  $el.appendTo(window.explorerDiv);
 
   var views = [
     {
@@ -110,36 +110,11 @@ var createExplorer = function(dataset, state) {
     }
   ];
 
- /* window.dataExplorer = new recline.View.MultiView({
+ window.dataExplorer = new recline.View.MultiView({
     model: dataset,
     el: $el,
     state: state,
     views: views
-  });*/
-  window.dataExplorer  =new recline.View.SlickGrid({
-        model: dataset,
-        /*state: {
-          gridOptions: {
-            editable: true,
-	    // Enable support for row add
-            enabledAddRow: true,
-	    // Enable support for row delete
-	    enabledDelRow: true,
-	    // Enable support for row Reoder 
-	    enableReOrderRow:true,
-            autoEdit: false,
-            enableCellNavigation: true
-          },
-          columnsEditor: [
-            { column: 'date', editor: Slick.Editors.Date },
-            { column: 'title', editor: Slick.Editors.Text }
-          ],
-	    
-        },*/
-	  el: $el
-   })
-  window.dataExplorer.visible = true;
-  window.dataExplorer.render()
-  $el.appendTo(window.explorerDiv);
+  });
 }
 
