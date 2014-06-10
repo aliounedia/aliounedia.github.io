@@ -134,8 +134,9 @@ var createExplorer = function(dataset, state) {
             { column: 'date', editor: Slick.Editors.Date },
             { column: 'title', editor: Slick.Editors.Text }
           ],
-	    el: $el
-        }
+	    
+        },
+	  el: $el
    })
   window.dataExplorer.render()
 }
