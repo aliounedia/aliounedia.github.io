@@ -1,4 +1,4 @@
-/*jQuery(function($) {
+jQuery(function($) {
   window.dataExplorer = null;
   window.explorerDiv = $('.data-explorer-here');
 
