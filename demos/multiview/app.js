@@ -138,6 +138,7 @@ var createExplorer = function(dataset, state) {
         },*/
 	  el: $el
    })
+  window.dataExplorer.visible = true;
   window.dataExplorer.render()
 }
 
