@@ -1,146 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='UTF-8'/>
-  <title>DataDeck &middot; Edit, Manipulate and Remix Data in the Browser</title>
-  <link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon' />
+---
+layout: default
+title: Home
+---
 
-  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <link href="vendor/bootstrap/2.3.1/bootstrap.min.css" rel="stylesheet">
-  <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-  <link href="vendor/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+<section class="home-page page-header">
+  <div class="container">
+    <div class="row">
+      <div class="span8 offset4">
+        <h1>
+          <a href="docs/"><img src="images/logo.png" width="455" height="190" alt="Recline Data Explorer and Library"></a>
+        </h1>
+        <div class="inner">
+          <p>A simple but powerful library for building data applications in
+          pure Javascript and HTML.</p>
+          <p>
+            Recline re-uses best-of-breed presentation libraries like
+            SlickGrid, Leaflet, Flot and D3 to create data 'Views'
+            and allows you to connect them with your data in seconds.
+          </p>
+          <p class="links">
+            <a href="docs/" class="btn btn-large">Documentation &raquo;</a>
+            <a href="docs/tutorials.html" class="btn btn-large">Tutorials &raquo;</a>
+            <a href="demos/" class="btn btn-large">Demos &raquo;</a>
+          </p>
 
-  <link rel="stylesheet" href="vendor/recline/vendor/leaflet/0.4.4/leaflet.css">
-  <!--[if lte IE 8]>
-  <link rel="stylesheet" href="vendor/recline/vendor/leaflet/0.4.4/leaflet.ie.css" />
-  <![endif]-->
-  <link rel="stylesheet" href="vendor/recline/vendor/leaflet.markercluster/MarkerCluster.css">
-  <link rel="stylesheet" href="vendor/recline/vendor/leaflet.markercluster/MarkerCluster.Default.css">
-  <link rel="stylesheet" href="vendor/recline/vendor/slickgrid/2.0.1/slick.grid.css">
-  <link rel="stylesheet" href="vendor/recline/css/flot.css">
-  <link rel="stylesheet" href="vendor/codemirror/3.0/codemirror.css">
+          <h3 style="color: white; margin-top: 40px;">Get started fast</h3>
+          <pre style="margin-top: 20px;"><code style="font-size: 90%;">// Load some data
+var dataset = recline.Model.Dataset({
+  records: [
+    { value: 1, date: '2012-08-07' },
+    { value: 5, b: '2013-09-07' }
+  ]
+  // Load CSV data instead
+  // (And Recline has support for many more data source types)
+  // url: 'my-local-csv-file.csv',
+  // backend: 'csv'
+});
 
-  <!-- Recline CSS components -->
-  <link rel="stylesheet" href="vendor/recline/dist/recline.css">
-  <!-- /Recline CSS components -->
+// get an element from your HTML for the viewer
+var $el = $('#data-viewer');
 
-  <script src="http://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    // setup gdocs file picker
-    google.load('picker', '1');
-  </script>
-
-  <!-- Custom CSS for the Transformer Online App -->
-  <link rel="stylesheet" href="css/style.css">
-
-  <!--[if lte IE 8]>
-  <script language="javascript" type="text/javascript" src="vendor/recline/vendor/flot/excanvas.min.js"></script>
-  <![endif]-->
-</head>
-<body>
-<div class="transformer-app">
-
-<div class="left-menu">
-  <div class="brand round">
-    <a href="./">
-      D
-    </a>
-    <a href="./" class="onhover">
-      D<span>ataDeck</span>
-    </a>
-  </div>
-  <ul class="dropdown user-status">
-    <li>
-      <a href="/doc/about.html">About</a>
-    </li>
-    <li>
-      <a href="http://github.com/okfn/dataexplorer">Developers</a>
-    </li>
-    <li class="divider"></li>
-    <li class="logged-in">
-      <a href="./#load">New Project</a>
-    </li>
-    <li class="logged-in">
-      <a href="./#dashboard">Dashboard</a>
-    </li>
-    <li class="logged-in">
-      <a class="logout" href="#" title="sign out">
-        Logout
-      </a>
-    </li>
-    <li class="not-logged-in">
-      <a class="login" href="#">Login with GitHub</a>
-    </li>
-  </ul>
-</div>
-
-    <div id="main">
-      <div class="view start" style="display: none;">
-        <div class="round splash">
-          <h2 class="icon landing">DataDeck</h2>
-          <div class="inner">
-            <p>DataDeck is an in-browser 'workbench' for editing, cleaning, and remixing tabular data</title>
-            <p><a href="/doc/about.html">Learn more</a></p>
-            <a class="btn btn-large login" href="#">Login with GitHub</a>
-          </div>
+var allInOneDataViewer = new recline.View.MultiView({
+  model: dataset,
+  el: $el
+});
+// Your new Data Viewer will be live!
+</code></pre>
         </div>
       </div>
-    </div><!-- /main -->
+    </div>
+  </div>
+</section>
 
-    <div class="processing-notice" style="display: none;"><span class="msg">Processing</span> <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" alt="Processing ..." /></div>
-</div>
-
-  <!-- 3rd party JS libraries -->
-  <script src='vendor/recline/vendor/jquery/1.7.1/jquery.js'></script>
-  <script src='vendor/jquery.cookie.js'></script>
-  <script src='vendor/underscore.js'></script>
-  <script src='vendor/github.js'></script>
-  <script src='vendor/splitter.js'></script>
-  <script src='vendor/jshint.js'></script>
-  <script type="text/javascript" src="vendor/codemirror/3.0/codemirror.js"></script>
-  <script type="text/javascript" src="vendor/codemirror/3.0/mode/javascript/javascript.js"></script>
-  <script type="text/javascript" src="vendor/codemirror/3.0/mode/markdown/markdown.js"></script>
-  <script src="vendor/bootstrap/2.3.1/bootstrap.min.js"></script>
-  <script src="vendor/bootstrap-editable/js/bootstrap-editable.min.js"></script>
-
-  <script src='vendor/recline/vendor/backbone/1.0.0/backbone.js'></script>
-  <script type="text/javascript" src="vendor/recline/vendor/moment/2.0.0/moment.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/mustache/0.5.0-dev/mustache.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/leaflet/0.4.4/leaflet.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/leaflet.markercluster/leaflet.markercluster.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/slickgrid/2.0.1/jquery-ui-1.8.16.custom.min.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/slickgrid/2.0.1/jquery.event.drag-2.0.min.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/slickgrid/2.0.1/slick.grid.min.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/flot/jquery.flot.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/flot/jquery.flot.time.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/underscore.deferred/0.4.0/underscore.deferred.js"></script>
-  <script type="text/javascript" src="vendor/recline/vendor/showdown/20120615/showdown.js"></script>
-
-  <script type="text/javascript" src="vendor/recline/dist/recline.js"></script>
-  <script type="text/javascript" src="vendor/csv.js/csv.js"></script>
-
-  <!-- Application-specific -->
-  <script src='src/boot.js'></script>
-  <script src='src/model.js'></script>
-
-  <script src='src/views/application.js'></script>
-  <script src='src/views/dashboard.js'></script>
-  <script src='src/views/project.js'></script>
-  <script src='src/views/load.js'></script>
-
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-33874954-13']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-</script>
-</body>
-</html>

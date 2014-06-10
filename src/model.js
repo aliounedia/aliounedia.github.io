@@ -1,576 +1,651 @@
-this.DataExplorer = this.DataExplorer || {};
-this.DataExplorer.Model = this.DataExplorer.Model || {};
+// # Recline Backbone Models
+this.recline = this.recline || {};
+this.recline.Model = this.recline.Model || {};
 
 (function(my) {
   "use strict";
 
-// The central object in the Data Explorer
-//
-// model
-// {
-//   source: datasetInfo // info needed load a dataset using recline
-//   // does not exist yet
-//   dest: 
-//   ...
-//   // save to gists
-//   scripts: [ {...}, ... ]
-// }
-my.Project = Backbone.Model.extend({
-  defaults: function() {
-    return {
-      name: 'No name',
-      readme: '',
-      state: 'active',
-      created: new Date().toISOString(),
-      sources: [],
-      profiles: {
-        "dataexplorer": "0.9"
-      },
-      scripts: [
-        {
-          id: 'main.js',
-          content: 'loadDataset("current", function (error, dataset) {\n  // error will be null unless there is an error\n  // dataset is a Recline memory store (http://reclinejs.com//docs/src/backend.memory.html).\n  console.log(dataset);\n});'
-        }
-      ],
-      datasets: [],
-      views: [
-        {
-          id: 'grid',
-          label: 'Grid',
-          // must be in recline.View namespace for the present
-          type: 'SlickGrid',
-          state: {
-            gridOptions: gridOptions
-          }
-        },
-        {
-          id: 'graph',
-          label: 'Graph',
-          type: 'Graph'
-        },
-        {
-          id: 'map',
-          label: 'Map',
-          type: 'Map'
-        }
-      ]
-    };
+// use either jQuery or Underscore Deferred depending on what is available
+var Deferred = (typeof jQuery !== "undefined" && jQuery.Deferred) || _.Deferred;
+
+// ## <a id="dataset">Dataset</a>
+my.Dataset = Backbone.Model.extend({
+  constructor: function Dataset() {
+    Backbone.Model.prototype.constructor.apply(this, arguments);
   },
 
+  // ### initialize
   initialize: function() {
     var self = this;
-    this.currentUserIsOwner = true;
-    this.last_modified = new Date();
-    this.unsavedChanges = new Backbone.Model({
-      any: false,
-      scripts: false,
-      datasets: false,
-      metadata: false
-    });
-    this.scripts = new Backbone.Collection();
-    this.datasets = new Backbone.Collection();
-    if (!this.id) {
-      // generate a unique id with guard against duplication
-      // there is some still small risk of a race condition if 2 apps doing this at the same time but we can live with it!
-      var _generateId = function() {
-        return 'dataexplorer-' + parseInt(Math.random() * 1000000, 10);
-      };
-      var _id = _generateId(); // TODO: Check in project list?
-      this.set({id: _id});
+    _.bindAll(this, 'query');
+    this.backend = null;
+    if (this.get('backend')) {
+      this.backend = this._backendFromString(this.get('backend'));
+    } else { // try to guess backend ...
+      if (this.get('records')) {
+        this.backend = recline.Backend.Memory;
+      }
     }
-    this.scripts.reset(_.map(
-      self.get('scripts'),
-      function(scriptData) { return new my.Script(scriptData); }
-    ));
-    this.datasets.reset(_.map(
-      self.get('datasets'),
-      function(datasetData) { return new recline.Model.Dataset(datasetData); }
-    ));
-    if(this.datasets && this.datasets.at(0)){
-	this.datasets.at(0).records.bind('add change remove', function() {
-	  self.datasets.at(0)._store= new recline.Backend.Memory.Store(
-	    self.datasets.at(0).records.toJSON(), 
-	    self.datasets.at(0)._store.fields
-	  );
-	  self.set({datasets: self.datasets.toJSON()});
-        self.unsavedChanges.set({
-          any: true,
-          datasets: true
-        });
-      });
+    this.fields = new my.FieldList();
+    this.records = new my.RecordList();
+    this._changes = {
+      deletes: [],
+      updates: [],
+      creates: []
+    };
+    this.facets = new my.FacetList();
+    this.recordCount = null;
+    this.queryState = new my.Query();
+    this.queryState.bind('change facet:add', function () {
+      self.query(); // We want to call query() without any arguments.
+    });
+    // store is what we query and save against
+    // store will either be the backend or be a memory store if Backend fetch
+    // tells us to use memory store
+    this._store = this.backend;
+
+    // if backend has a handleQueryResultFunction, use that
+    this._handleResult = (this.backend != null && _.has(this.backend, 'handleQueryResult')) ? 
+      this.backend.handleQueryResult : this._handleQueryResult;
+    if (this.backend == recline.Backend.Memory) {
+      this.fetch();
     }
-    this.datasets.bind('change add', function() {
-      self.set({datasets: self.datasets.toJSON()});
-      self.unsavedChanges.set({
-        any: true,
-        datasets: true
-      });
-    });
-    this.bind('change:readme change:name change:views', function(e) {
-      console.log('triggered');
-      self.unsavedChanges.set({
-        any: true,
-        metadata: true
-      });
-    });
-    this.scripts.bind('change', function(e) {
-      self.set({scripts: self.scripts.toJSON()});
-      self.unsavedChanges.set({
-        any: true,
-        scripts: true
-      });
-    });
   },
 
-  // Persists the dataset to a gist
-  saveToGist: function() {
+  sync: function(method, model, options) {
+    return this.backend.sync(method, model, options);
+  },
+
+  // ### fetch
+  //
+  // Retrieve dataset and (some) records from the backend.
+  fetch: function() {
     var self = this;
-    if (!window.authenticated || !this.currentUserIsOwner) return;
+    var dfd = new Deferred();
 
-    var gh = my.github()
-      , gistJSON = my.serializeProject(this)
-      , gist
-      , deferred = new $.Deferred()
-      ;
-
-    if (this.gist_id) {
-      gist = gh.getGist(this.gist_id);
-      gist.update(gistJSON, function(err, gist) {
-        if (err) {
-          alert('Failed to save project to gist');
-          console.log(err);
-          console.log(gistJSON);
-          deferred.reject();
-        } else {
-          console.log('Saved to gist successfully');
-          self._resetUnsaved();
-          deferred.resolve();
-        }
-      });
+    if (this.backend !== recline.Backend.Memory) {
+      this.backend.fetch(this.toJSON())
+        .done(handleResults)
+        .fail(function(args) {
+          dfd.reject(args);
+        });
     } else {
-      gistJSON.public = true;
-      gist = gh.getGist();
-      gist.create(gistJSON, function(err, gist) {
-        if (err) {
-          alert('Initial save of project to gist failed');
-          console.log(err);
-          console.log(gistJSON);
-          deferred.reject();
-        } else {
-          self.gist_id = gist.id;
-          // TODO: should we update the project with all the gist stuff (see unserializeProject below)
-          self.last_modified = new Date();
-          self._resetUnsaved();
-          deferred.resolve();
-        }
+      // special case where we have been given data directly
+      handleResults({
+        records: this.get('records'),
+        fields: this.get('fields'),
+        useMemoryStore: true
       });
     }
-    return deferred;
+
+    function handleResults(results) {
+      // if explicitly given the fields
+      // (e.g. var dataset = new Dataset({fields: fields, ...})
+      // use that field info over anything we get back by parsing the data
+      // (results.fields)
+      var fields = self.get('fields') || results.fields;
+
+      var out = self._normalizeRecordsAndFields(results.records, fields);
+      if (results.useMemoryStore) {
+        self._store = new recline.Backend.Memory.Store(out.records, out.fields);
+      }
+
+      self.set(results.metadata);
+      self.fields.reset(out.fields);
+      self.query()
+        .done(function() {
+          dfd.resolve(self);
+        })
+        .fail(function(args) {
+          dfd.reject(args);
+        });
+    }
+
+    return dfd.promise();
   },
 
-  _resetUnsaved: function() {
-    this.unsavedChanges.set({
-      any: false,
-      scripts: false,
-      datasets: false,
-      metadata: false
-    });
-  },
+  // ### _normalizeRecordsAndFields
+  // 
+  // Get a proper set of fields and records from incoming set of fields and records either of which may be null or arrays or objects
+  //
+  // e.g. fields = ['a', 'b', 'c'] and records = [ [1,2,3] ] =>
+  // fields = [ {id: a}, {id: b}, {id: c}], records = [ {a: 1}, {b: 2}, {c: 3}]
+  _normalizeRecordsAndFields: function(records, fields) {
+    // if no fields get them from records
+    if (!fields && records && records.length > 0) {
+      // records is array then fields is first row of records ...
+      if (records[0] instanceof Array) {
+        fields = records[0];
+        records = records.slice(1);
+      } else {
+        fields = _.map(_.keys(records[0]), function(key) {
+          return {id: key};
+        });
+      }
+    } 
 
-  trash: function () {
-    this.set("state", "trash");
-    this.saveToGist(false);
+    // fields is an array of strings (i.e. list of field headings/ids)
+    if (fields && fields.length > 0 && (fields[0] === null || typeof(fields[0]) != 'object')) {
+      // Rename duplicate fieldIds as each field name needs to be
+      // unique.
+      var seen = {};
+      fields = _.map(fields, function(field, index) {
+        if (field === null) {
+          field = '';
+        } else {
+          field = field.toString();
+        }
+        // cannot use trim as not supported by IE7
+        var fieldId = field.replace(/^\s+|\s+$/g, '');
+        if (fieldId === '') {
+          fieldId = '_noname_';
+          field = fieldId;
+        }
+        while (fieldId in seen) {
+          seen[field] += 1;
+          fieldId = field + seen[field];
+        }
+        if (!(field in seen)) {
+          seen[field] = 0;
+        }
+        // TODO: decide whether to keep original name as label ...
+        // return { id: fieldId, label: field || fieldId }
+        return { id: fieldId };
+      });
+    }
+    // records is provided as arrays so need to zip together with fields
+    // NB: this requires you to have fields to match arrays
+    if (records && records.length > 0 && records[0] instanceof Array) {
+      records = _.map(records, function(doc) {
+        var tmp = {};
+        _.each(fields, function(field, idx) {
+          tmp[field.id] = doc[idx];
+        });
+        return tmp;
+      });
+    }
+    return {
+      fields: fields,
+      records: records
+    };
   },
 
   save: function() {
-    if (window.authenticated && this.currentUserIsOwner) {
-      return this.saveToGist();
-    } else {
-      var deferred = new $.Deferred();
-      deferred.resolve();
-      return deferred;
+    var self = this;
+    // TODO: need to reset the changes ...
+    return this._store.save(this._changes, this.toJSON());
+  },
+
+  // ### query
+  //
+  // AJAX method with promise API to get records from the backend.
+  //
+  // It will query based on current query state (given by this.queryState)
+  // updated by queryObj (if provided).
+  //
+  // Resulting RecordList are used to reset this.records and are
+  // also returned.
+  query: function(queryObj) {
+    var self = this;
+    var dfd = new Deferred();
+    this.trigger('query:start');
+
+    if (queryObj) {
+      var attributes = queryObj;
+      if (queryObj instanceof my.Query) {
+        attributes = queryObj.toJSON();
+      }
+      this.queryState.set(attributes, {silent: true});
+    }
+    var actualQuery = this.queryState.toJSON();
+
+    this._store.query(actualQuery, this.toJSON())
+      .done(function(queryResult) {
+        self._handleResult(queryResult);
+        self.trigger('query:done');
+        dfd.resolve(self.records);
+      })
+      .fail(function(args) {
+        self.trigger('query:fail', args);
+        dfd.reject(args);
+      });
+    return dfd.promise();
+  },
+
+  _handleQueryResult: function(queryResult) {
+    var self = this;
+    self.recordCount = queryResult.total;
+    var docs = _.map(queryResult.hits, function(hit) {
+      var _doc = new my.Record(hit);
+      _doc.fields = self.fields;
+      _doc.bind('change', function(doc) {
+        self._changes.updates.push(doc.toJSON());
+      });
+      _doc.bind('destroy', function(doc) {
+        self._changes.deletes.push(doc.toJSON());
+      });
+      return _doc;
+    });
+    self.records.reset(docs);
+    if (queryResult.facets) {
+      var facets = _.map(queryResult.facets, function(facetResult, facetId) {
+        facetResult.id = facetId;
+        return new my.Facet(facetResult);
+      });
+      self.facets.reset(facets);
     }
   },
 
-  // load source dataset info
-  loadSourceDataset: function(cb) {
+  toTemplateJSON: function() {
+    var data = this.toJSON();
+    data.recordCount = this.recordCount;
+    data.fields = this.fields.toJSON();
+    return data;
+  },
+
+  // ### getFieldsSummary
+  //
+  // Get a summary for each field in the form of a `Facet`.
+  // 
+  // @return null as this is async function. Provides deferred/promise interface.
+  getFieldsSummary: function() {
     var self = this;
-    var datasetInfo = self.datasets.at(0).toJSON();
-    if (datasetInfo.backend == 'github') {
-      self.loadGithubDataset(datasetInfo.url, function(err, whocares) {
-        self.datasets.at(0).fetch().done(function() {
-          cb(null, self);
+    var query = new my.Query();
+    query.set({size: 0});
+    this.fields.each(function(field) {
+      query.addFacet(field.id);
+    });
+    var dfd = new Deferred();
+    this._store.query(query.toJSON(), this.toJSON()).done(function(queryResult) {
+      if (queryResult.facets) {
+        _.each(queryResult.facets, function(facetResult, facetId) {
+          facetResult.id = facetId;
+          var facet = new my.Facet(facetResult);
+          // TODO: probably want replace rather than reset (i.e. just replace the facet with this id)
+          self.fields.get(facetId).facets.reset(facet);
         });
-      });
-    } else {
-      self.datasets.at(0).fetch().done(function() {
-        // TODO: should we set dataset metadata onto project source?
-        cb(null, self);
+      }
+      dfd.resolve(queryResult);
+    });
+    return dfd.promise();
+  },
+
+  // Deprecated (as of v0.5) - use record.summary()
+  recordSummary: function(record) {
+    return record.summary();
+  },
+
+  // ### _backendFromString(backendString)
+  //
+  // Look up a backend module from a backend string (look in recline.Backend)
+  _backendFromString: function(backendString) {
+    var backend = null;
+    if (recline && recline.Backend) {
+      _.each(_.keys(recline.Backend), function(name) {
+        if (name.toLowerCase() === backendString.toLowerCase()) {
+          backend = recline.Backend[name];
+        }
       });
     }
-  },
-
-  loadGithubDataset: function(url, cb) {
-    var self = this;
-    var user =  url.split("/")[3];
-    var repo = url.split("/")[4];
-    var branch = url.split("/")[6];
-    var path = url.split('/').slice(7).join('/');
-
-    repo = getRepo(user, repo);
-
-    repo.read(branch, path, function(err, raw_csv) {
-      // TODO: need to do this properly ...
-      self.datasets.reset([new recline.Model.Dataset({data: raw_csv, backend: 'csv'})]);
-      cb(err, self.dataset);
-    });
-  },
-
-  toJSON: function() {
-    var out = Backbone.Model.prototype.toJSON.apply(this, arguments);
-    // make sure we serialize fields
-    // would like to do happen on model itself (i.e. change events on dataset objects trigger change in datasets attribute)
-    // but not sure how to ensure it has happened reliably
-    out.datasets = this.datasets.map(function(ds) {
-      var dsjson = ds.toJSON();
-      dsjson.fields = ds.fields.toJSON();
-      return dsjson;
-    });
-    return out;
+    return backend;
   }
 });
 
-// ### serializeProject
-//
-// Serialize a project to "Data Package" structure in line with the Data Package spec <http://www.dataprotocols.org/en/latest/data-packages.html>
-//
-// The specific JS structure shown here follows that of gists
-//
-// <pre>
-// {
-//    // optional
-//    description
-//    files: {
-//      'datapackage.json': {
-//        content: ... 
-//      },
-//      'filename': ...
-//    }
-// }
-// </pre>
-//
-// datapackage.json structure etc should be as defined in <http://www.dataprotocols.org/en/latest/data-packages.html>
-//
-// Implementation Note: one *must* ensure that content attribute of any file is
-// non-empty to avoid mysterious errors of the form:
-//
-// <pre>
-// {
-//   "errors": [
-//     {
-//       "code": "missing_field",
-//       "field": "files",
-//       "resource": "Gist"
-//     }
-//   ],
-//   "message": "Validation Failed"
-// }
-// </pre>
-my.serializeProject = function(project) {
-  // deep clone
-  // we alter the data object below and toJSON in backbone is a shallow copy
-  var data = $.extend(true, {}, project.toJSON());
 
-  // delete gist stuff
-  delete data.gist;
+// ## <a id="record">A Record</a>
+// 
+// A single record (or row) in the dataset
+my.Record = Backbone.Model.extend({
+  constructor: function Record() {
+    Backbone.Model.prototype.constructor.apply(this, arguments);
+  },
 
-  var description = data.name;
-  if (data.readme) {
-    description += ' - ' + data.readme.split('.')[0];
-  }
-  var gistJSON = {
-    description: description,
-    files: {
-      'datapackage.json': {},
-      'README.md': {
-        // must ensure file content is non-empty - see note above
-        content: data.readme || 'README is empty'
+  // ### initialize
+  // 
+  // Create a Record
+  //
+  // You usually will not do this directly but will have records created by
+  // Dataset e.g. in query method
+  //
+  // Certain methods require presence of a fields attribute (identical to that on Dataset)
+  initialize: function() {
+    _.bindAll(this, 'getFieldValue');
+  },
+
+  // ### getFieldValue
+  //
+  // For the provided Field get the corresponding rendered computed data value
+  // for this record.
+  //
+  // NB: if field is undefined a default '' value will be returned
+  getFieldValue: function(field) {
+    var val = this.getFieldValueUnrendered(field);
+    if (field && !_.isUndefined(field.renderer)) {
+      val = field.renderer(val, field, this.toJSON());
+    }
+    return val;
+  },
+
+  // ### getFieldValueUnrendered
+  //
+  // For the provided Field get the corresponding computed data value
+  // for this record.
+  //
+  // NB: if field is undefined a default '' value will be returned
+  getFieldValueUnrendered: function(field) {
+    if (!field) {
+      return '';
+    }
+    var val = this.get(field.id);
+    if (field.deriver) {
+      val = field.deriver(val, field, this);
+    }
+    return val;
+  },
+
+  // ### summary
+  //
+  // Get a simple html summary of this record in form of key/value list
+  summary: function(record) {
+    var self = this;
+    var html = '<div class="recline-record-summary">';
+    this.fields.each(function(field) { 
+      if (field.id != 'id') {
+        html += '<div class="' + field.id + '"><strong>' + field.get('label') + '</strong>: ' + self.getFieldValue(field) + '</div>';
       }
-    }
-  };
-  delete data.readme;
-
-  // as per http://www.dataprotocols.org/en/latest/data-packages.html list of "datasets" is listed in resources attribute
-  data.resources = data.datasets;
-  delete data.datasets;
-
-  _.each(data.scripts, function(script) {
-    script.path = script.id;
-    gistJSON.files[script.path] = {
-      // must ensure file content is non-empty - see note above
-      content: script.content || '// empty script'
-    };
-    delete script.content;
-  });
-
-  _.each(data.resources, function(dsInfo, idx) {
-    // Make sure we don't persist inline data
-    delete dsInfo.data;
-    // conform to datapackage spec which has fields inside schema
-    if (dsInfo.fields && dsInfo.fields.length > 0) {
-      dsInfo.schema = {
-        fields: dsInfo.fields
-      };
-      delete dsInfo.fields;
-    }
-  });
-
-  // we try to be efficient and only serialize data into gist json if we
-  // really need to (i.e. it has changed)
-  var saveDatasets = project.unsavedChanges.get('datasets')
-  if (saveDatasets) {
-    project.datasets.each(function (ds, idx) {
-      var ds_meta = project.get("datasets")[idx];
-      if(ds._store.fields){
-        var content = CSV.serialize(ds._store);
-        gistJSON.files[ds_meta.path] = {"content": content || "# No data"};
-	}
     });
-  }
+    html += '</div>';
+    return html;
+  },
 
-  gistJSON.files['datapackage.json'].content = JSON.stringify(data, null, 2);
-  return gistJSON;
-};
+  // Override Backbone save, fetch and destroy so they do nothing
+  // Instead, Dataset object that created this Record should take care of
+  // handling these changes (discovery will occur via event notifications)
+  // WARNING: these will not persist *unless* you call save on Dataset
+  fetch: function() {},
+  save: function() {},
+  destroy: function() { this.trigger('destroy', this); }
+});
 
-my.unserializeProject = function(serialized) {
-  var dp = JSON.parse(serialized.files['datapackage.json'].content);
 
-  // resources attribute lists data sources in data package spec
-  // if statements for backwards compatibility
-  if (dp.resources && !dp.datasets) {
-    dp.datasets = dp.resources;
-    delete dp.resources;
-  } else if (dp.files && !dp.datasets) {
-    dp.datasets = dp.files;
-    delete dp.files;
-  }
+// ## A Backbone collection of Records
+my.RecordList = Backbone.Collection.extend({
+  constructor: function RecordList() {
+    Backbone.Collection.prototype.constructor.apply(this, arguments);
+  },
+  model: my.Record
+});
 
-  if ('README.md' in serialized.files) {
-    dp.readme = serialized.files['README.md'].content;
-  }
-  _.each(dp.scripts, function(script) {
-    // we could be more careful ...
-    // if (script.path && _.has(serialized.files, script.path)) {
-    if (script.path) {
-      script.content = serialized.files[script.path].content;
+
+// ## <a id="field">A Field (aka Column) on a Dataset</a>
+my.Field = Backbone.Model.extend({
+  constructor: function Field() {
+    Backbone.Model.prototype.constructor.apply(this, arguments);
+  },
+  // ### defaults - define default values
+  defaults: {
+    label: null,
+    type: 'string',
+    format: null,
+    is_derived: false
+  },
+  // ### initialize
+  //
+  // @param {Object} data: standard Backbone model attributes
+  //
+  // @param {Object} options: renderer and/or deriver functions.
+  initialize: function(data, options) {
+    // if a hash not passed in the first argument throw error
+    if ('0' in data) {
+      throw new Error('Looks like you did not pass a proper hash with id to Field constructor');
     }
-  });
-  _.each(dp.datasets, function(ds) {
-    // it is possible the path does not exist if there was no data
-    if (ds.path) {
-      if (ds.path in serialized.files) {
-        ds.data = serialized.files[ds.path].content;
+    if (this.attributes.label === null) {
+      this.set({label: this.id});
+    }
+    if (this.attributes.type.toLowerCase() in this._typeMap) {
+      this.attributes.type = this._typeMap[this.attributes.type.toLowerCase()];
+    }
+    if (options) {
+      this.renderer = options.renderer;
+      this.deriver = options.deriver;
+    }
+    if (!this.renderer) {
+      this.renderer = this.defaultRenderers[this.get('type')];
+    }
+    this.facets = new my.FacetList();
+  },
+  _typeMap: {
+    'text': 'string',
+    'double': 'number',
+    'float': 'number',
+    'numeric': 'number',
+    'int': 'integer',
+    'datetime': 'date-time',
+    'bool': 'boolean',
+    'timestamp': 'date-time',
+    'json': 'object'
+  },
+  defaultRenderers: {
+    object: function(val, field, doc) {
+      return JSON.stringify(val);
+    },
+    geo_point: function(val, field, doc) {
+      return JSON.stringify(val);
+    },
+    'number': function(val, field, doc) {
+      var format = field.get('format'); 
+      if (format === 'percentage') {
+        return val + '%';
+      }
+      return val;
+    },
+    'string': function(val, field, doc) {
+      var format = field.get('format');
+      if (format === 'markdown') {
+        if (typeof Showdown !== 'undefined') {
+          var showdown = new Showdown.converter();
+          out = showdown.makeHtml(val);
+          return out;
+        } else {
+          return val;
+        }
+      } else if (format == 'plain') {
+        return val;
       } else {
-        ds.data = '';
+        // as this is the default and default type is string may get things
+        // here that are not actually strings
+        if (val && typeof val === 'string') {
+          val = val.replace(/(https?:\/\/[^ ]+)/g, '<a href="$1">$1</a>');
+        }
+        return val;
       }
     }
-    if (ds.schema) {
-      ds.fields = ds.schema.fields;
-    }
-  });
-
-  // add in all the gist stuff (if this is a gist)
-  // note we remove this again when we save
-  dp.gist = {
-    id: serialized.id,
-    user: serialized.owner,
-    forks: serialized.forks,
-    history: serialized.history,
-    apiUrl: serialized.url,
-    public: serialized.public,
-  }
-  // need to check this really is a gist to avoid erroring ...
-  if (serialized.git_push_url) {
-    // unfortunately html_url attribute does not include username for some reason so we have to construct ourselves
-    dp.gist.url = 'https://gist.github.com/' + serialized.owner.login + '/' + serialized.id;
-    dp.username = serialized.owner.login;
-  }
-
-  upgradeDataExplorerProject(dp);
-
-  var project = new my.Project(dp);
-  project.gist_id = serialized.id;
-  project.last_modified = new Date(serialized.updated_at);
-  if (serialized.fork_of) {
-    project.fork_of = {id: serialized.fork_of.id, owner: serialized.fork_of.owner.login};
-  }
-  // project.currentUserIsOwner (set elsewhere)
-
-  return project;
-};
-
-// recline slickgrid grid options for editability
-var gridOptions = {
-  editable: true,
-  enabledAddRow: true,
-  enabledDelRow: true,
-  autoEdit: false,
-  enableCellNavigation: true
-};
-
-// perform upgrades on the structure of the DataExplorer object
-// to support changes in structure over time
-function upgradeDataExplorerProject(project) {
-  // before we had profiles (and hence version that we are implementing)
-  if (!project.profiles) {
-    project.profiles = {
-      dataexplorer: "0.9"
-    }
-  }
-  var version = project.profiles.dataexplorer;
-  // version 0.9 upgrade
-  if (version === "0.9") {
-    _.each(project.views, function(view) {
-      if (view.type === 'SlickGrid') {
-        view.state = _.extend({}, view.state, { gridOptions: gridOptions });
-      }
-    });
-  }
-}
-
-my.ProjectList = Backbone.Collection.extend({
-  model: my.Project,
-  comparator: function (a, b) {
-    return b.last_modified - a.last_modified;
-  },
-  load: function() {
-    var self = this;
-    var gh = my.github();
-
-    gh.getUser().gists(function (err, gists) {
-
-      if (err) {
-        alert("Failed to retrieve your gists");
-        return;
-      }
-
-      // Only gists that contain datapackage.json
-      gists = _.filter(gists, function (gist) {
-        return "datapackage.json" in gist.files
-      });
-
-      _.each(gists, function (gist) {
-        // We could do lazy loading, but for now lets get the datapackage immediately
-        gh.getGist(gist.id).read(function (err, gist) {
-          var dp = my.unserializeProject(gist);
-          self.add(dp);
-        });
-      });
-
-    });
   }
 });
 
-my.Script = Backbone.Model.extend({
+my.FieldList = Backbone.Collection.extend({
+  constructor: function FieldList() {
+    Backbone.Collection.prototype.constructor.apply(this, arguments);
+  },
+  model: my.Field
+});
+
+// ## <a id="query">Query</a>
+my.Query = Backbone.Model.extend({
+  constructor: function Query() {
+    Backbone.Model.prototype.constructor.apply(this, arguments);
+  },
   defaults: function() {
     return {
-      created: new Date().toISOString(),
-      language: 'javascript',
-      content: ''
+      size: 100,
+      from: 0,
+      q: '',
+      facets: {},
+      filters: []
+    };
+  },
+  _filterTemplates: {
+    term: {
+      type: 'term',
+      // TODO do we need this attribute here?
+      field: '',
+      term: ''
+    },
+    range: {
+      type: 'range',
+      from: '',
+      to: ''
+    },
+    geo_distance: {
+      type: 'geo_distance',
+      distance: 10,
+      unit: 'km',
+      point: {
+        lon: 0,
+        lat: 0
+      }
+    }
+  },  
+  // ### addFilter(filter)
+  //
+  // Add a new filter specified by the filter hash and append to the list of filters
+  //
+  // @param filter an object specifying the filter - see _filterTemplates for examples. If only type is provided will generate a filter by cloning _filterTemplates
+  addFilter: function(filter) {
+    // crude deep copy
+    var ourfilter = JSON.parse(JSON.stringify(filter));
+    // not fully specified so use template and over-write
+    if (_.keys(filter).length <= 3) {
+      ourfilter = _.defaults(ourfilter, this._filterTemplates[filter.type]);
+    }
+    var filters = this.get('filters');
+    filters.push(ourfilter);
+    this.trigger('change:filters:new-blank');
+  },
+  replaceFilter: function(filter) {
+    // delete filter on the same field, then add
+    var filters = this.get('filters');
+    var idx = -1;
+    _.each(this.get('filters'), function(f, key, list) {
+      if (filter.field == f.field) {
+        idx = key;
+      }
+    });
+    // trigger just one event (change:filters:new-blank) instead of one for remove and 
+    // one for add
+    if (idx >= 0) {
+      filters.splice(idx, 1);
+      this.set({filters: filters});
+    }
+    this.addFilter(filter);
+  },
+  updateFilter: function(index, value) {
+  },
+  // ### removeFilter
+  //
+  // Remove a filter from filters at index filterIndex
+  removeFilter: function(filterIndex) {
+    var filters = this.get('filters');
+    filters.splice(filterIndex, 1);
+    this.set({filters: filters});
+    this.trigger('change');
+  },
+  // ### addFacet
+  //
+  // Add a Facet to this query
+  //
+  // See <http://www.elasticsearch.org/guide/reference/api/search/facets/>
+  addFacet: function(fieldId, size, silent) {
+    var facets = this.get('facets');
+    // Assume id and fieldId should be the same (TODO: this need not be true if we want to add two different type of facets on same field)
+    if (_.contains(_.keys(facets), fieldId)) {
+      return;
+    }
+    facets[fieldId] = {
+      terms: { field: fieldId }
+    };
+    if (!_.isUndefined(size)) {
+      facets[fieldId].terms.size = size;
+    }
+    this.set({facets: facets}, {silent: true});
+    if (!silent) {
+      this.trigger('facet:add', this);
+    }
+  },
+  addHistogramFacet: function(fieldId) {
+    var facets = this.get('facets');
+    facets[fieldId] = {
+      date_histogram: {
+        field: fieldId,
+        interval: 'day'
+      }
+    };
+    this.set({facets: facets}, {silent: true});
+    this.trigger('facet:add', this);
+  },
+  removeFacet: function(fieldId) {
+    var facets = this.get('facets');
+    // Assume id and fieldId should be the same (TODO: this need not be true if we want to add two different type of facets on same field)
+    if (!_.contains(_.keys(facets), fieldId)) {
+      return;
+    }
+    delete facets[fieldId];
+    this.set({facets: facets}, {silent: true});
+    this.trigger('facet:remove', this);
+  },
+  clearFacets: function() {
+    var facets = this.get('facets');
+    _.each(_.keys(facets), function(fieldId) {
+      delete facets[fieldId];
+    });
+    this.trigger('facet:remove', this);
+  },
+  // trigger a facet add; use this to trigger a single event after adding
+  // multiple facets
+  refreshFacets: function() {
+    this.trigger('facet:add', this);
+  }
+
+});
+
+
+// ## <a id="facet">A Facet (Result)</a>
+my.Facet = Backbone.Model.extend({
+  constructor: function Facet() {
+    Backbone.Model.prototype.constructor.apply(this, arguments);
+  },
+  defaults: function() {
+    return {
+      _type: 'terms',
+      total: 0,
+      other: 0,
+      missing: 0,
+      terms: []
     };
   }
 });
 
-// Github stuff
-// -------
+// ## A Collection/List of Facets
+my.FacetList = Backbone.Collection.extend({
+  constructor: function FacetList() {
+    Backbone.Collection.prototype.constructor.apply(this, arguments);
+  },
+  model: my.Facet
+});
 
-// Gimme a Github object! Please.
-my.github = function() {
-  return new Github({
-    token: $.cookie('oauth-token'),
-    username: $.cookie('username'),
-    auth: "oauth"
-  });
-};
+// ## Object State
+//
+// Convenience Backbone model for storing (configuration) state of objects like Views.
+my.ObjectState = Backbone.Model.extend({
+});
 
-var currentRepo = {
-  user: null,
-  repo: null,
-  instance: null
-};
 
-// Smart caching (needed for managing subsequent updates)
-// -------
+// ## Backbone.sync
+//
+// Override Backbone.sync to hand off to sync function in relevant backend
+// Backbone.sync = function(method, model, options) {
+//   return model.backend.sync(method, model, options);
+// };
 
-function getRepo(user, repo) {
-  if (currentRepo.user === user && currentRepo.repo === repo) {
-    return currentRepo.instance; // Cached
-  }
+}(this.recline.Model));
 
-  currentRepo = {
-    user: user,
-    repo: repo,
-    instance: my.github().getRepo(user, repo)
-  };
-
-  return currentRepo.instance;
-}
-
-function loadGithubFile(url, cb) {
-  var user =  url.split("/")[3];
-  var repo = url.split("/")[4];
-  var branch = url.split("/")[6];
-  var path = url.split('/').slice(7).join('/');
-
-  repo = getRepo(user, repo);
-  repo.read(branch, path, cb);
-};
-
-// Load Application
-// -------
-// 
-// Load everything that's needed for the app + header
-
-my.loadUserInfo = function(cb) {
-  $.ajax({
-    type: "GET",
-    url: 'https://api.github.com/user',
-    dataType: 'json',
-    contentType: 'application/x-www-form-urlencoded',
-    headers : { Authorization : 'token ' + $.cookie('oauth-token') },
-    success: function(res) {
-      $.cookie("avatar", res.avatar_url);
-      $.cookie("username", res.login);
-      DataExplorer.app.username = res.login;
-
-      var user = my.github().getUser();
-      var owners = {};
-
-      cb(null);
-    },
-    error: function(err) { 
-      cb('error');
-    }
-  });
-};
-
-// Authentication
-// -------
-
-my.logout = function() {
-  window.authenticated = false;
-  $.cookie("oauth-token", null);
-};
-
-// Save Dataset
-// -------
-
-my.saveDataset = function(user, repo, branch, data, commitMessage, cb) {
-  repo = getRepo(user, repo);
-
-  repo.write(branch, 'data/data.csv', data, commitMessage, function(err) {
-    cb(err);
-  });
-};
-
-}(this.DataExplorer.Model));

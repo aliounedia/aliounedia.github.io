@@ -1,87 +1,137 @@
-View, visualize and transform data in the browser.
+[![Build Status](https://travis-ci.org/okfn/recline.png)](https://travis-ci.org/okfn/recline)
 
-Data Explorer is a browser-based (pure HTML + JS) open-source application for
-exploring and transforming data.
+A simple but powerful library for building data applications in pure Javascript and HTML.
 
-It works well with any source of tabular data. Load and save from multiple
-sources include google spreadsheets, CSVs and Github. Graph and map data, write
-javascript to clean and transform data.
+<h3><a href="http://okfnlabs.org/recline/">Recline Website - including Overview, Documentation, Demos etc</a></h3>
 
-Built on [Recline JS](http://okfnlabs.org/recline/).
+## Features
 
-## Use it
+* Open-source (and heavy reuser of existing open-source libraries)
+* Pure javascript (no Flash) and designed for integration -- so it is easy to
+  embed in other sites and applications
+* View and edit your data in clean grid interface
+* Bulk update/clean your data using an easy scripting UI
+* Visualize your data
+* And more ... see <http://okfnlabs.org/recline/>
 
-Visit <http://explorer.okfnlabs.org/>
+## Contributing
 
-Want to use it locally? Just do "save as" and save the html (with all
-associated files) to your hard disk. Note that for github login to work you
-will need to have the app opened at a non file:/// url e.g.
-http://localhost/dataexplorer.
+See CONTRIBUTING.md.
 
-## Developers
+### Contributors
 
-Install:
+* [Rufus Pollock](http://rufuspollock.org/)
+* [Max Ogden](http://maxogden.com/)
+* [John Glover](https://github.com/johnglover)
+* [James Casbon](http://casbon.me/)
+* [Adrià Mercader](http://amercader.net/)
+* [Dominik Moritz](https://github.com/domoritz)
+* [Friedrich Lindenberg](http://pudo.org/)
+* [Alioune Dia](http://https://github.com/aliounedia)
+* [kielni](https://github.com/kielni)
+* And [many more](https://github.com/okfn/recline/graphs/contributors)
 
-    git clone --recursive https://github.com/okfn/dataexplorer
+## Changelog
 
-Then just open `index.html` in your browser!
+### v0.6 - Sprint 2013 (tbc)
 
-Note: if you just open `index.html` most of the app will function but login
-will **not** work. For login to work on your local machine you must deploy the
-app at this specific URL:
+[v0.6 milestone](https://github.com/okfn/recline/issues?milestone=5)
 
-    http://localhost/src/dataexplorer/
+Possible breaking changes
+* Support for row/add/delete/Reorder for recline slickGrid check `_includes/recline-deps.html` for slcikGrid plugins required #396
+* Many backends moved to their own repositories #314
+* Updated Leaflet to latest version 0.4.4 #220
+* Added marker clustering in map view to handle a large number of markers
+* Dataset.restore method removed (not used internally except from Multiview.restore)
+* Views no longer call render in initialize but must be called client code
+* Backend.Memory.Store attribute for holding 'records' renamed to `records` from `data`
+* Require new underscore.deferred vendor library for all use (jQuery no longer required if just using recline.dataset.js)
+* View.el is now the raw DOM element. If you want a jQuery-wrapped version, use view.$el. #350
+* Upgraded timelinejs lib - #316
+* Pager widget now takes Dataset object rather than QueryState object #386
 
-The reason for this is that a (uniqute) "callback" URL to the location of the
-DataExplore instance that the OAuth login will send users back to has to be set
-in Github when you set up the OAuth "app" in Github (and that URL is the one
-listed there).
+### v0.5 - July 5th 2012 (first public release)
 
-If you are running or nginx or apache on your local machine setting up an alias
-like this to your local src directory should be easy.
-Also if you have python installed , you can run SimpleHTTPServer from src 's parent 
-directory.
+[40 closed issues](https://github.com/okfn/recline/issues?milestone=2&page=1&state=closed)
 
-    python -m  SimpleHTTPServer 80
+Lots of breaking changes to the API from v0.4 (should be very few going forwards) including:
 
+* State only stores backend (name) and dataset url (in url field) rather than entire dataset object
+* Backends heavily reorganized
+* Rename Document -> Record
+* Rename DataExplorer view to MultiView
+* ...
 
-### Github Login
+### v0.4 - April 26th 2012
 
-Login is via Github using their OAuth method.
+[23 closed issues](https://github.com/okfn/recline/issues?milestone=2&page=1&state=closed) including:
 
-We have a pure HTML / JS app (no standard backend) and with pure HTML/JS you
-can't do OAuth Github login directly and need an OAuth proxy in the form of
-[gatekeeper][].
+* Map view using Leaflet - #69, #64, #89, #97
+* Term filter support - #66
+* Faceting support- #62
+* Tidy up CSS and JS - #81 and #78
+* Manage and serialize view and dataset state (plus support for embed and permalinks) - #88, #67
+* Graph view improvements e.g. handle date types correctly - #75
+* Write support for ES backend - #61
+* Remove JQuery-UI dependency in favour of bootstrap modal - #46
+* Improved CSV import support - #92
 
-[gatekeeper]: https://github.com/prose/gatekeeper
+### v0.3 - March 31st 2012
 
-Thus, if you want to deploy your own instance of Data Explorer you'll need to
-set up a new instance of gatekeeper and then change the `gatekeeper_url` value
-in `src/boot.js`.
+[16 closed issues](https://github.com/okfn/recline/issues?milestone=1&state=closed) including:
 
-### Understanding the Architecture
+* ElasticSearch (and hence DataHub/CKAN) backend - #54
+* Loading of local CSV files - #36
+* Fully worked out Data Query support - #34, #49, #53, #57
+* New Field model object for richer field information - #25
+* Upgrade to Bootstrap v2.0 - #55
+* Recline Data Explorer app improvements e.g. #39 (import menu)
+* Graph improvements - #58 (more graph types, graph interaction)
 
-To learn more about the the code see doc/developers.md
+### v0.2 - Feb 24th 2012
 
-### Deploying
+[17 closed issues](https://github.com/okfn/recline/issues?milestone=3&state=closed) including:
 
-For github login you will need to set up your own gatekeeper instance as per above.
+* Major refactor of backend and model relationship - #35 and #43
+* Support Google Docs Spreadsheets as a Backend - #15
+* Support for online CSV and Excel files via DataProxy backend - #31
+* Data Explorer is customizable re loaded views - #42
+* Start of documentation - #33
+* Views in separate files - #41
+* Better error reporting from backends on JSONP errors - #30
+* Sorting and show/hide of columns in data grid - #23, #29
+* Support for pagination - #27
+* Split backends into separate files to make them easier to maintain and reuse separately #50
 
-## License and Credits
+### v0.1 - Jan 28th 2012
 
-The first version of this app was built by Michael Aufreiter and Rufus Pollock.
-It reused several portions of [Prose][] including github login and portions of
-the styling.
+* Core models and structure including Dataset and Document
+* Memory and webstore backends
+* Grid, Graph and Data Explorer views
+* Bootstrap-based theme - #22
 
-[Prose]: https://github.com/prose/prose
+## Copyright and License
 
-Licensed under the MIT license.
+Copyright 2011 Max Ogden and Rufus Pollock.
 
-All Credits as per Recline. Also all the great vendor libraries including:
+Licensed under the MIT license:
 
-* Backbone
-* Bootstrap
-* Leaflet
-* Flot
-* [CodeMirror](http://codemirror.net/)
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 
