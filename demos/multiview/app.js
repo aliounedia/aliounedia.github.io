@@ -120,5 +120,6 @@ var createExplorer = function(dataset, state) {
     model: dataset,
     el: $el,
   })
+  window.dataExplorer.render()
 }
 
