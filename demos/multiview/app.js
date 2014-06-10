@@ -133,7 +133,8 @@ var createExplorer = function(dataset, state) {
           columnsEditor: [
             { column: 'date', editor: Slick.Editors.Date },
             { column: 'title', editor: Slick.Editors.Text }
-          ]
+          ],
+	    el: $el
         }
    })
 }
