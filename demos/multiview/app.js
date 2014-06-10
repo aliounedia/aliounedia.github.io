@@ -35,7 +35,7 @@ jQuery(function($) {
         {id: 3, date: '2011-04-04', x: 4, y: 8, z: 6, country: 'UK', title: 'fourth', lat:57.27, lon:-6.20},
         {id: 4, date: '2011-05-04', x: 5, y: 10, z: 15, country: 'UK', title: 'fifth', lat:51.58, lon:0},
         {id: 5, date: '2011-06-02', x: 6, y: 12, z: 18, country: 'DE', title: 'sixth', lat:51.04, lon:7.9}
-      ],
+      ]/*,
       // let's be really explicit about fields
       // Plus take opportunity to set date to be a date field and set some labels
       fields: [
@@ -48,7 +48,7 @@ jQuery(function($) {
         {id: 'title', 'label': 'Title'},
         {id: 'lat'},
         {id: 'lon'}
-      ]
+      ]*/
     });
   }
   createExplorer(dataset, state);
@@ -116,6 +116,7 @@ var createExplorer = function(dataset, state) {
     state: state,
     views: views
   });*/
+  
   window.dataExplorer = new recline.View.SlickGrid({
     model: dataset,
     el: $el
