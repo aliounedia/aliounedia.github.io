@@ -16,5 +16,6 @@ dataset.fetch();
 var grid = new recline.View.SlickGrid({
   model: dataset
 });
+grid.render()
 $('#my-online-csv').append(grid.el);
 
