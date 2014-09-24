@@ -111,21 +111,11 @@ var data = [
   {id: 5, date: '2011-06-02', x: 6, y: 12, z: 18, country: 'DE', geo: {lat:51.04, lon:7.9}}
 ];
 
-/*
+
 var dataset = new recline.Model.Dataset({
   records: data
 });
-*/
 
-var dataset = new recline.Model.Dataset({
-  url: 'https://s3.amazonaws.com/nyc-open-data/data-cityofnewyork-us-2xh6-psuq.csv',
-  backend: 'csv',
-  //delimiter: ',',
-  // quotechar: '"',
-  // encoding: 'utf8'
-});
-
-dataset.fetch();
 var $el = $('#mygrid');
 var grid = new recline.View.SlickGrid({
   model: dataset,
