@@ -9,14 +9,14 @@ var dataset = new recline.Model.Dataset({
 });
 
 // remember this is async so if you want to do something you need to call it in done method e.g.
-dataset.fetch().done(function(dataset) { 
-console.log( "record count : " + dataset.recordCount)});
-//dataset.fetch();
+// dataset.fetch.done(function(dataset) { console.log(dataset.recordCount)});
+dataset.fetch();
 
 // show the data for illustrations sake
 var grid = new recline.View.SlickGrid({
-  model: dataset
+  model: dataset,
+  el : $('#my-online-csv')
 });
 grid.visible = true;
-$('#my-online-csv').append(grid.el);
+//$('#my-online-csv').append(grid.el);
 
