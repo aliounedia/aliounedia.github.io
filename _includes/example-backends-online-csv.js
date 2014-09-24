@@ -21,9 +21,9 @@ $('#my-online-csv').append(grid.el);
 
 dataset.fetch().done(function(dataset) {
   alert("records")
-  alert(dataset.records)
+  alert(dataset.records.toJSON())
   if (console) {
-    console.log(dataset.records);
+    console.log(dataset.records.toJSON());
   }
 });
 
