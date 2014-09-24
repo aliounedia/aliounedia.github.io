@@ -3,24 +3,9 @@
 var dataset = new recline.Model.Dataset({
   url: '{{page.root}}/demos/data/sample.csv',
   backend: 'csv',
-  state: {
-          gridOptions: {
-            editable: true,
-	    // Enable support for row add
-            enabledAddRow: true,
-	    // Enable support for row delete
-	    enabledDelRow: true,
-	    // Enable support for row Reoder 
-	    enableReOrderRow:true,
-            autoEdit: false,
-            enableCellNavigation: true
-          },
-          columnsEditor: [
-            { column: 'date', editor: Slick.Editors.Date },
-            { column: 'title', editor: Slick.Editors.Text }
-          ]
-        }
-
+  // delimiter: ',',
+  // quotechar: '"',
+  // encoding: 'utf8'
 });
 
 // remember this is async so if you want to do something you need to call it in done method e.g.
@@ -32,5 +17,4 @@ var grid = new recline.View.SlickGrid({
   model: dataset
 });
 $('#my-online-csv').append(grid.el);
-
 
