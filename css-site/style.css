@@ -210,6 +210,10 @@ section {
 
 .doc-ex-rendered {
   margin-bottom: 20px;
-  height: 50px;
 }
+
+#my-online-csv {
+  height: 50px
+}
+
 
