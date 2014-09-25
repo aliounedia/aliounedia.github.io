@@ -1,7 +1,7 @@
 // Create the dataset in the usual way
 // Note the additional options you can specify for parsing the CSV file
 var dataset = new recline.Model.Dataset({
-  url: '{{page.root}}/demos/data/sample.csv',
+  url: '{{page.root}}demos/data/sample.csv',
   backend: 'csv',
   // delimiter: ',',
   // quotechar: '"',
@@ -14,8 +14,7 @@ dataset.fetch();
 
 // show the data for illustrations sake
 var grid = new recline.View.SlickGrid({
-  model: dataset,
-  el:  $('#my-online-csv')
+  model: dataset
 });
-grid.visible = true;
+$('#my-online-csv').append(grid.el);
 
