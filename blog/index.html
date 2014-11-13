@@ -1,0 +1,59 @@
+---
+layout: blog
+title: The Data Wrangling Blog
+---
+
+{% include blog_header.html %}
+
+<div class="row">
+  <div class="span9">
+    <ul class="blog posts">
+      {% for post in site.categories.blog %}
+        {% include blog_posts.html %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="span3">
+    <h3>Have your say!</h3>
+    <p>Do you have a topic that you'd like to write about? We love guest posts.
+    Here's <a href="add/">how to submit one &raquo;</a></p>
+    
+    <br />
+    <h3>Blogroll</h3>
+    <p>Some places we find inspiration:</p>
+
+    <ul>
+      <li><a href="http://codeforamerica.org/labs/">Code for America
+        Labs</a></li>
+      <li><a href="http://worldbank.tumblr.com/">World Bank
+        Dataviz</a> and <a
+        href="http://maps.worldbank.org/content/article">Mapping for
+        Results</a></li>
+      <li><a href="http://www.propublica.org/nerds">ProPublica Nerd
+        Blog</a></li>
+      <li><a href="http://digital.cabinetoffice.gov.uk/">Government
+        Digital Service</a></li>
+      <li><a href="http://tacticaltech.org/reveal/news">Tactical
+        Technology: Reveal</a></li>
+      <li><a
+        href="http://developmentseed.org/blog/">DevelopmentSeed</a></li>
+      <li><a href="http://vis4.net/blog/">vis4.net</a></li>
+      <li><a
+        href="http://datadrivenjournalism.net/news_and_analysis">DataDrivenJournalism.net</a></li>
+      <li><a
+        href="http://openinstitute.com/category/open-governance/">Open
+        Institute - Kenya</a></li>
+      <li><a href="http://ire.org/tag/behind-the-story/">IRE: Behind the
+        Story</a></li>
+      <li><a href="http://sunlightlabs.com/blog/">Sunlight Labs
+        Blog</a> and <a
+        href="http://reporting.sunlightfoundation.com/">Sunlight
+        Reporting</a></li>
+      <li><a
+        href="https://reportingproject.net/occrp/index.php/en/cc-blog">Organized
+        Crime and Corruption Reporting Project</a></li>
+      <li><a href="http://blog.scraperwiki.com/">ScraperWiki Data
+        Blog</a></li>
+    </ul>
+  </div>
+</div>

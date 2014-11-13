@@ -1,5 +1,4 @@
-highlighter: pygments
+highligher: pygments
+# markdown: rdiscount
 markdown: kramdown
-
-title: Recline Data Explorer and Library
-
+future: false

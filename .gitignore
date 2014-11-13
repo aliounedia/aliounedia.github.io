@@ -1,6 +1,4 @@
+/_site/
 .DS_Store
-sandbox/*
 .*.swp
-.*.swo
-_site/*
-node_modules/*
+sandbox/*

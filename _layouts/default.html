@@ -1,122 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
-  <meta charset="utf-8" />
-  <title>{{ page.title }} - Recline Data Explorer and Library</title>
+  <meta charset="utf-8">
+  <title>{{page.title}} - Open Knowledge Foundation Labs</title>
 
-  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+  <!-- Open Graph Protocol http://ogp.me/ -->
+  <meta property="og:title" content="Open Knowledge Foundation Labs" />
+  <meta property="og:description" content="We're a community of civic hackers, data wranglers and ordinary citizens intrigued and excited by the possibilities of combining technology and information for good – making government more accountable, culture more accessible and science more efficient." />
+  <meta property="og:url" content="http://okfnlabs.org" />
+  <meta property="og:image" content="http://okfnlabs.org/img/okfnlabs.png" />
+
   <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  <link rel="stylesheet" href="{{ page.root }}vendor/bootstrap/2.3.2/css/bootstrap.css" />
-
-  {% if page.recline-deps %}
-    {% include recline-deps.html %}
+  <!-- styles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap-responsive.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/syntax.css" type="text/css" />
+  <link rel="stylesheet" href="/css/labs.css">
+  {% if page.lightbox %}
+  <link rel="stylesheet" href="/css/slimbox2.css" type="text/css" media="screen" />
   {% endif %}
+  <link rel="stylesheet" href="http://okfnlabs.org/githubActivity.js/githubActivity.css" />
+  <link rel="stylesheet" href="/css/chosen.min.css" />
 
-  <!-- link rel="stylesheet" href="vendor/bootstrap/2.3.2/css/bootstrap-responsive.css" -->
+  <!-- must have these at the top of the page so we can do scripts in content of specific pages -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+  <script src="/js/underscore.js"></script>
+  <script src="http://okfnlabs.org/githubActivity.js/githubActivity.js"></script>
 
-  <link href="{{ page.root }}css-site/pygments.css" rel="stylesheet" type="text/css" />
-  <link href="{{ page.root }}css-site/style.css" rel="stylesheet" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Open Knowledge Foundation Labs Feed" href="http://okfnlabs.org/blog/feed.xml" />
+  <link rel="shortcut icon" href="http://assets.okfn.org/p/okfn/img/favicon.ico">
 </head>
-<body>
-<div class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
+
+<body class="body-{{page.bodyclass}}">
+  <!-- OKF Panel -->
+  <div class="absolute-okf-panel">
+    <div id="okf-panel" class="collapse">
+      <iframe src="http://assets.okfn.org/themes/okfn/okf-panel.html" scrolling="no"></iframe>
+    </div>
     <div class="container">
-      <a class="logo-icon pull-left" href="/">
-        <img src="http://assets.okfn.org/p/recline/img/chair.png" />
-      </a>
-      <a class="brand" href="{{page.root}}"><strong>Recline.js</strong> &ndash; relax with your data</a>
-      <ul class="nav">
-        <li>
-          <a href="{{page.root}}docs/">
-            <i class="icon-book icon-white"></i>
-            Documentation
-          </a>
-        </li>
-        <li class="divider-vertical"></li>
-        <li>
-          <a href="{{page.root}}docs/tutorials.html">
-            <i class="icon-road icon-white"></i>
-            Tutorials
-          </a>
-        </li>
-        <li class="divider-vertical"></li>
-        <li>
-          <a href="{{page.root}}demos/">
-            <i class="icon-pencil icon-white"></i>
-            Demos
-          </a>
-        </li>
-        <li class="divider-vertical"></li>
-        <li>
-          <a href="{{page.root}}download.html">
-            <i class="icon-download-alt icon-white"></i>
-            Download
-          </a>
-        </li>
-      </ul>
-      <ul class="nav pull-right">
-        <li>
-          <a href="http://github.com/okfn/recline/" title="Recline on Github">
-            <iframe src="http://ghbtns.com/github-btn.html?user=okfn&repo=recline&type=watch&count=true"
-                allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-{{content}}
-
-<section class="footer">
-	<div class="container">
-    <div class="row">
-      <div class="span4">
-        <p class="getit-btn"><a href="{{page.root}}docs/" class="btn">Use the Library &raquo;</a></p>
-        <p>Recline.js is freely redistributable under the terms of the MIT license.</p>
-      </div>
-      <div class="span3">
-        <p><a href="http://www.shuttleworthfoundation.org/"><img src="http://farm8.staticflickr.com/7019/6467412887_18f72f5066_n.jpg" style="width: 140px;" alt="Supported by funding from the Shuttleworth Foundation" /></a></p>
-        <ul>
-          <li><a href="http://datahub.io/">The DataHub</a></li>
-          <li><a href="http://OpenSpending.org/">OpenSpending.org</a></li>
-          <li><a href="http://datacouch.com/">DataCouch.com</a></li>
-        </ul>
-      </div>
-      <div class="span3">
-        <ul>
-          <li><a href="http://okfnlabs.org/">Open Knowledge Foundation Labs</a></li>
-          <li><a href="http://opendefinition.org/">Open Definition</a></li>
-          <li><a href="http://okfn.org/">Open Knowledge Foundation</a></li>
-        </ul>
-      </div>
-      <div class="span2">
-        <h5>Contacts</h5>
-        <ul style="list-style-type: none; margin-left: 0;">
-          <li><a href="http://twitter.com/okfnlabs">@OKFNLabs</a></li>
-          <li><a href="http://twitter.com/maxogden">@maxogden</a></li>
-          <li><a href="http://twitter.com/rufuspollock">@rufuspollock</a></li>
-        </ul>
-        <a class="nav-logo" href="http://okfn.org/" title="An Open Knowledge Foundation Project">
-          <img src="http://assets.okfn.org/p/okfn/img/logo_28x30.png" alt="Open Knowledge Foundation logo" />
-        </a>
+      <div class="okfn-ribbon">
+        <a href="http://okfn.org/" data-toggle="collapse" data-target="#okf-panel" title="Part of the Open Knowledge Foundation Network">An Open Knowledge Foundation Site</a>
       </div>
     </div>
   </div>
-</section>
+  <!-- End OKF Panel -->
+	<div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <a href="/" class="brand"><img src="http://assets.okfn.org/p/labs/img/logo.png" alt="Open Knowledge Foundation Labs" style="height:62px;"></a>
+        <ul class="nav pull-right">
+          <li><a class="nav-join" href="/join">Join</a></li>
+          <li><a class="nav-blog" href="/blog">Blog</a></li>
+          <li><a class="nav-code" href="/projects">Projects</a></li>
+          <li><a class="nav-events" href="/events">Events</a></li>
+          <li><a class="nav-about" href="/about">About</a></li>
+          <li><a class="nav-members" href="/members">Members</a></li>
+          <li><a class="nav-contact" href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
+  <div class="container">
+    <div class="content">
+      {{ content }}
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <!--div class="row">
+        <div class="span12">
+          <ul class="flatmenu">
+            <li><strong>Open Government</strong></li>
+            <li><a href="http://datahub.io">DataHub</a></li>
+            <li><a href="http://openspending.org">OpenSpending</a></li>
+            <li><a href="http://opengovernmentdata.org/">Open
+              Government Data WG</a></li>
+            <li><a href="http://datacatalogs.org/">DataCatalogs</a></li>
+            <li><a href="http://energy.publicdata.eu/ee/">Europe's Energy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12">
+          <ul class="flatmenu">
+            <li><strong>Open Research and Education</strong></li>
+            <li><a href="http://schoolofdata.org">School of Data</a></li>
+            <li><a href="http://access.okfn.org/">@ccess</a></li>
+            <li><a href="http://science.okfn.org">Science</a></li>
+            <li><a href="http://openeconomics.net/">Economics</a></li>
+            <li><a href="http://openbiblio.net/">Bibliography</a></li>
+            <li><a href="http://linguistics.okfn.org/">Linguistics</a></li>
+
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12">
+          <ul class="flatmenu">
+            <li><strong>Open Culture</strong></li>
+            <li><a href="http://humanities.okfn.org/">Humanities</a></li>
+            <li><a href="http://design.okfn.org/">Design</a></li>
+            <li><a href="http://openglam.org/">GLAM</a></li>
+            <li><a href="http://textusproject.org/">Textus</a></li>
+          </ul>
+        </div>
+      </div-->
+      <div class="row logorow">
+        <div class="span6">
+          <a href="http://www.shuttleworthfoundation.org/"><img src="/img/shuttleworth_small.png" alt="Funded by the Shuttleworth Foundation"></a>
+        </div>
+        <div class="span6 text-right">
+          <a href="http://okfn.org" class="okf-logo" title="Part of the Open Knowledge Foundation"><img src="/img/okfn.png" alt="Open
+            Knowledge Foundation"></a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12 text-right">
+          <ul class="flatmenu">
+            <li><a href="/about/">About Us</a></li>
+            <li><a href="http://okfn.org/opendata/">Open Data</a></li>
+            <li><a href="http://okfn.org/terms-of-use/">Terms of Use</a></li>
+            <li><a href="http://okfn.org/privacy-policy/">Privacy Policy</a></li>
+            <li><a href="http://okfn.org/ip-policy/">IP Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12 text-right">
+          <p class="projects">
+            <a href="http://schoolofdata.org/" title="School of Data - Learn Data Skills">
+              <img src="http://assets.okfn.org/p/schoolofdata/img/logo.png" alt="School of Data" /></a>
+            <a href="http://okfnlabs.org/" title="Open Knowledge Foundation Labs">
+              <img src="http://assets.okfn.org/p/labs/img/logo.png" alt="" /></a>
+            <a href="http://datahub.io/" title="DataHub - Publish, Find and Share Data Easily">
+              <img src="http://assets.okfn.org/p/datahub/img/logo-full.png" alt="DataHub" /></a>
+            <a href="http://openspending.org/" title="OpenSpending">
+              <img src="http://assets.okfn.org/p/openspending/img/openspending-logo.png" alt="OpenSpending" /></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  {% if page.lightbox %}
+  <script src="/js/slimbox2.js"></script>
+  {% endif %}
 <script type="text/javascript">
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-8271754-44']);
+  _gaq.push(['_setAccount', 'UA-33874954-3']);
   _gaq.push(['_trackPageview']);
+
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
+<script src="http://assets.okfn.org/themes/okfn/collapse.min.js" type="text/javascript"></script>
+<script src="http://assets.okfn.org/themes/okfn/okf-panel.js" type="text/javascript"></script>
 </body>
 </html>
+
+

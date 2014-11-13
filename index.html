@@ -1,54 +1,62 @@
 ---
+title: Open Knowledge Foundation Labs
 layout: default
-title: Home
 ---
 
-<section class="home-page page-header">
-  <div class="container">
-    <div class="row">
-      <div class="span8 offset4">
-        <h1>
-          <a href="docs/"><img src="images/logo.png" width="455" height="190" alt="Recline Data Explorer and Library"></a>
-        </h1>
-        <div class="inner">
-          <p>A simple but powerful library for building data applications in
-          pure Javascript and HTML.</p>
-          <p>
-            Recline re-uses best-of-breed presentation libraries like
-            SlickGrid, Leaflet, Flot and D3 to create data 'Views'
-            and allows you to connect them with your data in seconds.
-          </p>
-          <p class="links">
-            <a href="docs/" class="btn btn-large">Documentation &raquo;</a>
-            <a href="docs/tutorials.html" class="btn btn-large">Tutorials &raquo;</a>
-            <a href="demos/" class="btn btn-large">Demos &raquo;</a>
-          </p>
-
-          <h3 style="color: white; margin-top: 40px;">Get started fast</h3>
-          <pre style="margin-top: 20px;"><code style="font-size: 90%;">// Load some data
-var dataset = recline.Model.Dataset({
-  records: [
-    { value: 1, date: '2012-08-07' },
-    { value: 5, b: '2013-09-07' }
-  ]
-  // Load CSV data instead
-  // (And Recline has support for many more data source types)
-  // url: 'my-local-csv-file.csv',
-  // backend: 'csv'
-});
-
-// get an element from your HTML for the viewer
-var $el = $('#data-viewer');
-
-var allInOneDataViewer = new recline.View.MultiView({
-  model: dataset,
-  el: $el
-});
-// Your new Data Viewer will be live!
-</code></pre>
-        </div>
-      </div>
+<div class="row">
+  <div class="span12">
+    <div id="claim" class="robot">
+      We make tools and insights using
+      <br />
+      open data, open content and open code
+      <br />
+      <a href="/join/">Join in &raquo;</a>
     </div>
   </div>
-</section>
+</div>
+<div class="row">
+  <div class="span8 home">
+    {% include blog_header.html %}
+    <ul class="blog posts">
+      {% for post in site.categories.blog limit:5 %}
+        {% include blog_posts.html %}
+      {% endfor %}
+      <li><a href="/blog/">All blog posts&hellip;</a></li>
+    </ul>
 
+
+    
+  </div>
+  <div class="span4 home sidebar">
+    <h4>Search Labs</h4>
+    <form action="/search">
+      <input type="text" name="search" placeholder="Search" class="">
+    </form>
+
+    <h4>Get involved</h4>
+    <p>
+    Labs is an open community. Come <a href="/join/">join in &raquo;</a>.
+    </p>
+    <p>There are also plenty of ways to <a href="/contact/">get in touch</a>.</p>
+    </p>
+    <h4>Get Updates</h4>
+    <p>Join our announce list and get regular (monthly) updates.</p>
+    {% include list_signup.html %}
+
+    <h4>Twitter</h4>
+    {% include tweets.html %}
+
+    <h4>Latest Activity</h4>
+    {% include activity.html %}
+
+    <h4>Upcoming Events</h4>
+    {% include events.html %}
+
+    <!--div class="boxed">
+      Let's run an event together. 
+      <a href="/about">Get in touch</a>.
+    </div-->
+
+    <a href="http://www.shuttleworthfoundation.org/"><img src="http://assets.okfn.org/images/shuttleworth/shuttleworth%20funded-01.png" alt="Shuttleworth Supported" style="width: 200px;" /></a>
+  </div>
+</div>
